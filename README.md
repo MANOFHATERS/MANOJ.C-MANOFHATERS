@@ -47,8 +47,10 @@ apps/web/             Next.js 16, React 19, statically generated
   app/                routes, OG images, sitemap, robots, llms.txt
   components/         hand-built to the art direction; no component kit
     specimen/         the 3D object and its vector stills
+    motion/           the cursor, counters, sound toggle, TOC rail
     diagrams/         one hairline architecture diagram per project
   lib/                specimen geometry, the offline guide, analytics
+    motion/           the motion module: tokens, lenis, veil, sound, haptics
   scripts/            the résumé PDF generator
   assets/fonts/       static instances of the three typefaces
 
@@ -79,13 +81,28 @@ its code.
   of any mono, self-hosted with the arrows `← → ↗` that the Google Fonts
   latin subset does not ship). Old-style figures in prose, tabular lining
   figures in tables.
-- **Motion:** native CSS scroll-driven animation inside `@supports`, so a
-  browser without it shows finished content rather than content stuck at zero
-  opacity. No animation library in the bundle. Nothing travels more than 12px
-  or lasts more than 700ms. The drawn arrow system (custom SVGs, 1.5px
-  stroke, butt caps) carries the one hover signature: the arrow swap.
-- **Reduced motion:** all entrance and scroll-linked motion removed, and the
-  specimen switches to stills.
+- **Motion — "Measured Precision":** the site moves like a Swiss chronometer,
+  not a slot machine. A versioned token system (durations in two registers,
+  productive vs expressive; Carbon-calibrated easings; stagger and parallax
+  laws) governs every value, published on the
+  [colophon](/colophon) as live documentation. GSAP + ScrollTrigger drive the scroll choreography, Lenis
+  wraps — never replaces — the native scroll, and entrances remain native CSS
+  scroll-driven animation inside `@supports`, so a browser without it shows
+  finished content. The drawn arrow system (custom SVGs, 1.5px stroke, butt
+  caps) still carries the one hover signature: the arrow swap.
+- **Signature moments:** the paper veil route transition (a sheet of the
+  page's own ivory with a 1px IKB leading edge), the shared-specimen morph
+  from the work index into a case study's header plate, the sticky proof
+  strip with counting numbers, the magnetic cursor with mono labels, the
+  specimen's drag inertia and scroll-linked drift, and the 404 set in the
+  specimen's own node constellation.
+- **Sound and haptics:** five synthesized voices on the Web Audio API —
+  zero audio files, CSP untouched — off by default, persisted, one click to
+  reverse. Vibration is an Android-only honesty clause.
+- **Reduced motion:** a designed tier-two experience, not a kill switch —
+  entrances, parallax, cursor, smooth scroll and specimen motion removed;
+  colour, focus, the drawn check and the latched rating retained, because
+  removing feedback removes information.
 
 ### The specimen
 
@@ -99,8 +116,12 @@ its code.
 
 Positions are computed from a fixed seed at module load — about 50 KB of
 `Float32Array`, no binary asset to fetch. On desktop the object lives in a
-fixed rail and morphs as the reader scrolls through the three project plates;
-on a phone each plate carries its own still.
+fixed rail and morphs as the reader scrolls through the three project plates,
+with anticipation (the rotation addresses the next state before the morph
+begins), a settle-through scale dip, ±8° of scroll-linked drift, and drag
+inertia with honest friction — the momentum the reader imparted, decaying,
+never bounced. Hovered nodes scale to 1.4 on the tap spring and name their
+type. On a phone each plate carries its own still.
 
 It loads after the hero text has painted and the browser is idle, pauses when
 it leaves the viewport or the tab is hidden, and is replaced by a **vector**

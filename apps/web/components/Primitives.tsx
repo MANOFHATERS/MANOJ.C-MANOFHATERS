@@ -1,5 +1,7 @@
 import type { AnchorHTMLAttributes, ReactNode } from 'react';
 
+import { Counter } from '@/components/motion/Counter';
+
 /* ── Links ────────────────────────────────────────────────────────────── */
 
 interface InkLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -124,7 +126,12 @@ export function MetricTable({ rows }: { rows: readonly MetricRow[] }) {
             <tr key={row.metric}>
               <td className="pr-6 text-[var(--color-ink)]">{row.metric}</td>
               <td className="pr-6">
-                <span className="val">{row.value}</span>
+                {/* Values count up once from zero; the source column never
+                    moves, because a metric without a source is an opinion
+                    and this site does not animate opinions (RFD-09). */}
+                <span className="val">
+                  <Counter value={row.value} />
+                </span>
                 {row.comparison ? (
                   <span className="block src mt-1 normal-case tracking-normal">
                     {row.comparison}

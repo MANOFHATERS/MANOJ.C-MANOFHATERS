@@ -18,8 +18,16 @@ export function ResumeLink({
     <a
       href={RESUME_PDF}
       download="Manoj-C-Resume.pdf"
-      onClick={() => track('resume_download')}
+      onClick={() => {
+        track('resume_download');
+        // The confirm voice — only if the reader switched sound on
+        // (Motion PRD Table 11.1: résumé download started).
+        import('@/lib/motion/sound').then(({ playVoice }) => {
+          playVoice('confirm');
+        });
+      }}
       className={className}
+      data-cursor="read"
     >
       {children}
     </a>

@@ -86,7 +86,11 @@ export type LinkEventName =
   | 'github_click'
   | 'linkedin_click'
   | 'repo_click'
-  | 'chat_open';
+  | 'chat_open'
+  /* Motion layer (Motion PRD Appendix B): the sound toggle's two
+     states — the only schema-touching change the upgrade makes. */
+  | 'sound_toggle_on'
+  | 'sound_toggle_off';
 
 export interface LinkEventRequest {
   readonly name: LinkEventName;

@@ -34,16 +34,19 @@ export function SelectedWork() {
           </div>
         </div>
 
-        <ol className="m-0 list-none p-0">
+        <ol className="enter-stagger m-0 list-none p-0">
           {projects.map((p, i) => (
             <li
               key={p.slug}
               data-specimen={p.specimen}
               className="border-t border-[var(--color-rule)] first:border-t-0"
+              style={{ ['--i' as string]: i }}
             >
               <Link
                 href={`/work/${p.slug}`}
-                className="group block py-10 lg:py-16 transition-colors duration-[var(--dur-base)]"
+                data-specimen-link={p.specimen}
+                data-cursor="view"
+                className="work-row group block py-10 lg:py-16 transition-colors duration-[var(--dur-base)]"
               >
                 <div className="grid12">
                   <div className="col-span-2 lg:col-span-2">
@@ -81,8 +84,9 @@ export function SelectedWork() {
                   </div>
 
                   {/* On phones each row carries its own still of the state the
-                      specimen would take. On desktop the rail does it live. */}
-                  <div className="col-span-12 mt-8 lg:hidden">
+                      specimen would take. On desktop the rail does it live.
+                      The plate is the T2 source when it is visible. */}
+                  <div className="col-span-12 mt-8 lg:hidden" data-row-plate>
                     <div className="relative aspect-[4/3] w-full border border-[var(--color-rule)] bg-[var(--color-paper-raised)]">
                       <SpecimenInline
                         state={p.specimen}

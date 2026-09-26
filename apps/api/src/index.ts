@@ -88,6 +88,10 @@ const eventSchema = z.object({
     'linkedin_click',
     'repo_click',
     'chat_open',
+    // Motion layer (Motion PRD Appendix B): sound toggle telemetry —
+    // enum values only, no migration, same link_events pipeline.
+    'sound_toggle_on',
+    'sound_toggle_off',
   ]),
   path: z.string().max(200),
 });

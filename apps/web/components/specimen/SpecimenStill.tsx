@@ -44,9 +44,13 @@ function project(
 export function SpecimenStill({
   state,
   className = '',
+  waiting = false,
 }: {
   state: SpecimenStateName;
   className?: string;
+  /** The waiting state draws its edges over 800ms — the honest loader
+   * (Motion PRD 8.5): the waiting state previews the thing waited for. */
+  waiting?: boolean;
 }) {
   const pos = STATE_POSITIONS[state];
   const camZ = CAMERA_Z[state];
@@ -61,7 +65,7 @@ export function SpecimenStill({
   return (
     <svg
       viewBox={`0 0 ${VIEW} ${VIEW}`}
-      className={className}
+      className={`${className}${waiting ? ' specimen-loader' : ''}`}
       role="img"
       aria-hidden="true"
       width="100%"
@@ -92,6 +96,7 @@ export function SpecimenStill({
             return (
               <line
                 key={i}
+                pathLength={1}
                 x1={a.x.toFixed(1)}
                 y1={a.y.toFixed(1)}
                 x2={b.x.toFixed(1)}
@@ -104,6 +109,7 @@ export function SpecimenStill({
 
       {state === 'graph' ? (
         <polyline
+          pathLength={1}
           points={heroPath
             .map((i) => {
               const p = project(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2], camZ);

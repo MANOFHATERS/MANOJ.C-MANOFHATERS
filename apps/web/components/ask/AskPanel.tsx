@@ -227,8 +227,9 @@ export function AskPanel() {
           </button>
         </header>
 
-        {/* Log */}
-        <div ref={logRef} className="flex-1 overflow-y-auto px-5 py-5">
+        {/* Log — data-lenis-prevent: the panel's own scroll surface is
+            exempt from the smooth-scroll layer (Lenis contract). */}
+        <div ref={logRef} data-lenis-prevent className="flex-1 overflow-y-auto px-5 py-5">
           {turns.length === 0 ? (
             <div>
               <p className="prose-measure text-[0.97em] leading-[1.55] text-[var(--color-graphite)]">
@@ -260,15 +261,27 @@ export function AskPanel() {
                     </p>
                   ) : (
                     <div>
-                      <p className="text-[0.99em] leading-[1.6] text-[var(--color-ink)]">
-                        {turn.text}
-                        {turn.streaming ? (
-                          <span
-                            className="ml-0.5 inline-block h-[0.95em] w-[1px] translate-y-[0.1em] bg-[var(--color-pigment)]"
-                            aria-hidden="true"
-                          />
-                        ) : null}
-                      </p>
+                      {/* While the first token has not yet arrived, the
+                          answer area is a skeleton in paper-raised with a
+                          slow shimmer — the only skeleton on the site
+                          (Motion PRD 8.5). */}
+                      {turn.streaming && !turn.text ? (
+                        <div className="flex flex-col gap-2.5 py-1" aria-hidden="true">
+                          <span className="skeleton-line w-[92%]" />
+                          <span className="skeleton-line w-[100%]" />
+                          <span className="skeleton-line w-[68%]" />
+                        </div>
+                      ) : (
+                        <p className="text-[0.99em] leading-[1.6] text-[var(--color-ink)]">
+                          {turn.text}
+                          {turn.streaming ? (
+                            <span
+                              className="ml-0.5 inline-block h-[0.95em] w-[1px] translate-y-[0.1em] bg-[var(--color-pigment)]"
+                              aria-hidden="true"
+                            />
+                          ) : null}
+                        </p>
+                      )}
 
                       {turn.sources && turn.sources.length > 0 ? (
                         <ul className="mt-3 flex flex-wrap gap-1.5 p-0 m-0 list-none">

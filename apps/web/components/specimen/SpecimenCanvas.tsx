@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import {
   AdaptiveDpr,
@@ -83,21 +83,34 @@ function Nodes({
   state,
   tier,
   onHover,
+  hovered,
 }: {
   indices: number[];
   positions: Float32Array;
   state: SpecimenStateName;
   tier: Tier;
   onHover: (i: number | null) => void;
+  /** The globally hovered node — shared ref, damped per instance below. */
+  hovered: React.RefObject<number | null>;
 }) {
   const ref = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
   const colour = useMemo(() => new THREE.Color(), []);
   const isGraphite = indices.length > 0 && nodeFinish[indices[0]] === 1;
 
-  useFrame(() => {
+  // Per-instance scale channel, damped toward the target on the tap
+  // spring's character — Table 8.1: hovered nodes scale to 1.4, the
+  // same physical response the buttons give, at specimen amplitude.
+  const liveScale = useMemo(
+    () => Float32Array.from(indices, (i) => nodeScale[i]),
+    [indices],
+  );
+
+  useFrame((_, rawDelta) => {
     const mesh = ref.current;
     if (!mesh) return;
+    const delta = Math.min(rawDelta, 0.05);
+    const k = 1 - Math.exp(-delta * 14); // --spring-tap character
 
     for (let n = 0; n < indices.length; n++) {
       const i = indices[n];
@@ -107,19 +120,21 @@ function Nodes({
         positions[i * 3 + 2],
       );
       const hero = heroSet.has(i);
-      const s = nodeScale[i] * (hero && state === 'graph' ? 1.55 : 1);
-      dummy.scale.setScalar(s);
+      const base = nodeScale[i] * (hero && state === 'graph' ? 1.55 : 1);
+      const target = hovered.current === i ? base * 1.4 : base;
+      liveScale[n] += (target - liveScale[n]) * k;
+      dummy.scale.setScalar(liveScale[n]);
       dummy.updateMatrix();
       mesh.setMatrixAt(n, dummy.matrix);
 
       // Pigment marks meaning, never decoration: the highlighted path in the
       // graph, the left tail in the distribution, the first provider layer.
-      let target: THREE.Color;
-      if (state === 'graph' && hero) target = PIGMENT;
-      else if (state === 'tail' && tailFlag[i] === 1) target = PIGMENT;
-      else target = isGraphite ? INK : PORCELAIN;
+      let targetColour: THREE.Color;
+      if (state === 'graph' && hero) targetColour = PIGMENT;
+      else if (state === 'tail' && tailFlag[i] === 1) targetColour = PIGMENT;
+      else targetColour = isGraphite ? INK : PORCELAIN;
 
-      colour.copy(target);
+      colour.copy(targetColour);
       mesh.setColorAt(n, colour);
     }
 
@@ -297,6 +312,17 @@ function Specimen({ state, tier, onHover }: SceneProps) {
   const group = useRef<THREE.Group>(null);
   const { camera, size } = useThree();
 
+  // The hovered node, shared with the instanced meshes so both porcelain
+  // and graphite nodes can respond — labels AND scale (Table 8.1).
+  const hovered = useRef<number | null>(null);
+  const handleHoverNode = useCallback(
+    (i: number | null) => {
+      hovered.current = i;
+      onHover(i);
+    },
+    [onHover],
+  );
+
   // Live positions, damped toward the target state. 240 lerps a frame is
   // nothing; doing it on the CPU keeps the whole thing debuggable.
   const live = useMemo(() => Float32Array.from(STATE_POSITIONS.graph), []);
@@ -304,14 +330,118 @@ function Specimen({ state, tier, onHover }: SceneProps) {
   const tilt = useRef({ x: 0, y: 0, vx: 0, vy: 0 });
   const pointer = useRef({ x: 0, y: 0 });
 
+  /* ── The choreography channel (Motion PRD 10.3) ──────────────────────
+     Anticipation: as the reading position approaches a state boundary,
+     the rotation addresses the incoming state for 200ms before the morph
+     begins, so transitions read as intention rather than as a test of
+     attention. Settle-through: morphs pass through a brief 0.98 scale
+     dip — the object inhales before it reorganises. */
+  const morph = useRef({ holdUntil: 0, target: state, dip: 1 });
+  if (morph.current.target !== state) {
+    morph.current = { target: state, holdUntil: performance.now() + 200, dip: morph.current.dip };
+  }
+
+  /* Continuous depth: the object turns with the reading, at the
+     specimen's idle pace — ±8° across a full section pass, driven by
+     scroll velocity, decaying with the fling friction. Between states
+     the rail stays alive without ever demanding attention. */
+  const drift = useRef({ yaw: 0, vel: 0, lastScroll: -1 });
+
+  /* Drag (Motion PRD 9.4): a pointer down grabs the rotation, one-to-one
+     while held; on release the angular velocity carries forward with a
+     0.95-per-frame friction decay. No bounce, no rubber-banding —
+     honest momentum the user imparted and can re-impart at any moment.
+     Tilt composes with (adds to) the user's rotation. */
+  const drag = useRef({ active: false, id: -1, x: 0, y: 0, vyaw: 0, vpitch: 0 });
+  const grabbed = useRef({ yaw: 0, pitch: 0 });
+
+  const startDrag = useCallback((e: ThreeEvent<PointerEvent>) => {
+    drag.current.active = true;
+    drag.current.id = e.pointerId;
+    drag.current.x = e.clientX;
+    drag.current.y = e.clientY;
+    drag.current.vyaw = 0;
+    drag.current.vpitch = 0;
+    grabbed.current.yaw = spin.current + drift.current.yaw;
+    grabbed.current.pitch = tilt.current.x;
+    document.documentElement.setAttribute('data-specimen-dragging', 'true');
+  }, []);
+
+  const moveDrag = useCallback((e: ThreeEvent<PointerEvent>) => {
+    if (!drag.current.active || e.pointerId !== drag.current.id) return;
+    const dx = e.clientX - drag.current.x;
+    const dy = e.clientY - drag.current.y;
+    drag.current.x = e.clientX;
+    drag.current.y = e.clientY;
+    // One-to-one: roughly one viewport width of travel = one full turn.
+    const kx = (Math.PI * 2) / Math.max(320, window.innerWidth);
+    const ky = (Math.PI * 0.5) / Math.max(320, window.innerHeight);
+    drift.current.yaw = grabbed.current.yaw + dx * kx - spin.current;
+    tilt.current.x = Math.max(-0.9, Math.min(0.9, grabbed.current.pitch + dy * ky));
+    drag.current.vyaw = dx * kx * 60; // per-second velocity for the release
+    drag.current.vpitch = dy * ky * 60;
+  }, []);
+
+  const endDrag = useCallback(() => {
+    drag.current.active = false;
+    document.documentElement.removeAttribute('data-specimen-dragging');
+  }, []);
+
+  useEffect(() => {
+    const onUp = () => endDrag();
+    window.addEventListener('pointerup', onUp, { passive: true });
+    window.addEventListener('pointercancel', onUp, { passive: true });
+    return () => {
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+      document.documentElement.removeAttribute('data-specimen-dragging');
+    };
+  }, [endDrag]);
+
   useFrame((s, rawDelta) => {
     const delta = Math.min(rawDelta, 0.05);
+    const held = performance.now() < morph.current.holdUntil;
     const target = STATE_POSITIONS[state];
 
-    // Critically damped approach. No overshoot, no bounce.
-    const k = 1 - Math.exp(-delta * 3.4);
-    for (let i = 0; i < live.length; i++) {
-      live[i] += (target[i] - live[i]) * k;
+    // Critically damped approach. No overshoot, no bounce. During the
+    // anticipation window the shapes hold; the turn leads the morph.
+    if (!held) {
+      const k = 1 - Math.exp(-delta * 3.4);
+      for (let i = 0; i < live.length; i++) {
+        live[i] += (target[i] - live[i]) * k;
+      }
+    }
+
+    // Settle-through: how far the shapes are apart decides the dip.
+    let spread = 0;
+    for (let i = 0; i < live.length; i += 3) {
+      spread += Math.abs(target[i] - live[i]);
+    }
+    const dipTarget = spread > 0.3 ? 0.98 : 1;
+    morph.current.dip += (dipTarget - morph.current.dip) * (1 - Math.exp(-delta * 6));
+
+    if (!drag.current.active) {
+      // Continuous depth: scroll velocity feeds the yaw channel, decaying
+      // with the fling friction between sections.
+      const y = window.scrollY;
+      if (drift.current.lastScroll >= 0 && y !== drift.current.lastScroll) {
+        const d = y - drift.current.lastScroll;
+        drift.current.vel +=
+          (d * (8 * Math.PI)) / 180 / Math.max(1, window.innerHeight);
+      }
+      drift.current.lastScroll = y;
+
+      const FRICTION = 0.95; // --spring-fling, per frame at 60fps
+      const f = Math.pow(FRICTION, delta * 60);
+      drift.current.vel *= f;
+      drift.current.yaw += drift.current.vel * delta;
+      // Released drag carries its angular velocity into the channel.
+      drift.current.yaw += drag.current.vyaw * delta;
+      drag.current.vyaw *= f;
+      tilt.current.x += drag.current.vpitch * delta;
+      drag.current.vpitch *= f;
+      if (Math.abs(drag.current.vyaw) < 1e-4) drag.current.vyaw = 0;
+      if (Math.abs(drag.current.vpitch) < 1e-4) drag.current.vpitch = 0;
     }
 
     // Idle: settling, not spinning. The graph turns slowly; the histogram
@@ -322,6 +452,10 @@ function Specimen({ state, tier, onHover }: SceneProps) {
       } else {
         spin.current += (0 - spin.current) * (1 - Math.exp(-delta * 2.2));
       }
+
+      // Anticipation: while the shapes hold, the rotation addresses the
+      // incoming state.
+      if (held) spin.current += delta * 0.2;
 
       // Pointer tilt, +/- 6 degrees, critically damped spring.
       const MAX = (6 * Math.PI) / 180;
@@ -339,7 +473,12 @@ function Specimen({ state, tier, onHover }: SceneProps) {
       tilt.current.x += tilt.current.vx * delta;
       tilt.current.y += tilt.current.vy * delta;
 
-      group.current.rotation.set(tilt.current.x, spin.current + tilt.current.y, 0);
+      group.current.rotation.set(
+        tilt.current.x,
+        spin.current + drift.current.yaw + tilt.current.y,
+        0,
+      );
+      group.current.scale.setScalar(morph.current.dip);
     }
 
     // Camera distance is solved for the current state and canvas shape, then
@@ -356,9 +495,11 @@ function Specimen({ state, tier, onHover }: SceneProps) {
   return (
     <group
       ref={group}
+      onPointerDown={startDrag}
       onPointerMove={(e) => {
         pointer.current.x = (e.pointer?.x ?? 0) * -1;
         pointer.current.y = (e.pointer?.y ?? 0) * -1;
+        moveDrag(e);
       }}
       onPointerLeave={() => {
         pointer.current.x = 0;
@@ -370,14 +511,16 @@ function Specimen({ state, tier, onHover }: SceneProps) {
         positions={live}
         state={state}
         tier={tier}
-        onHover={onHover}
+        onHover={handleHoverNode}
+        hovered={hovered}
       />
       <Nodes
         indices={graphiteIndices}
         positions={live}
         state={state}
         tier={tier}
-        onHover={onHover}
+        onHover={handleHoverNode}
+        hovered={hovered}
       />
       <EdgeLines positions={live} state={state} />
       <HeroPath positions={live} visible={state === 'graph'} />

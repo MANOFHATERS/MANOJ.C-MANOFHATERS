@@ -7,6 +7,8 @@ import { projects } from '@manoj/content/projects';
 import { Masthead } from '@/components/Masthead';
 import { Footer } from '@/components/Footer';
 import { AskProvider } from '@/components/ask/AskProvider';
+import { MotionRoot } from '@/components/motion/MotionRoot';
+import { Cursor } from '@/components/motion/Cursor';
 
 import './globals.css';
 
@@ -180,6 +182,11 @@ export default function RootLayout({
         <a className="skip-link" href="#main">
           Skip to content
         </a>
+        {/* The reading progress rule: pure CSS on the root scroll timeline,
+            decorative, off the main thread (Motion PRD 10.6). */}
+        <div className="reading-progress" aria-hidden="true" />
+        <MotionRoot />
+        <Cursor />
         <AskProvider>
           <Masthead />
           <main id="main">{children}</main>

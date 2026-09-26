@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 
 import { STATE_CAPTION, type SpecimenStateName } from '@/lib/specimen-geometry';
+import { playSettleAfter } from '@/lib/motion/sound';
 import { SpecimenStill } from './SpecimenStill';
 
 /**
@@ -130,20 +131,36 @@ export function SpecimenInline({
   // `absolute inset-0` inside a container with a fixed aspect ratio). Adding
   // `relative` here as well silently won the cascade in Tailwind v4, which
   // took the wrapper out of its absolute placement, left it zero-high, and
-  // rendered the specimen as a speck.
-  const wrapperClass = className || 'relative';
+  // rendered the specimen as a speck. `specimen-drag` makes the surface a
+  // touch surface (Motion PRD 9.4) without ever trapping page scroll.
+  const wrapperClass = className
+    ? `specimen-drag ${className}`
+    : 'specimen-drag relative';
 
   if (!ssrStill && mode === 'deciding') {
-    return <div ref={wrap} className={wrapperClass} />;
+    return (
+      <div ref={wrap} className={wrapperClass}>
+        <SpecimenStill state={state} className="absolute inset-0" waiting />
+      </div>
+    );
   }
 
   return (
     <div ref={wrap} className={wrapperClass}>
+      {/* The honest loader (Motion PRD 8.5): the still's edges draw while
+          WebGL warms, then the live canvas cross-fades in over it at the
+          moderate duration. The still stays underneath — instant fallback
+          if the context is ever lost. */}
+      <SpecimenStill
+        state={state}
+        className="pointer-events-none absolute inset-0"
+        waiting={mode !== 'live'}
+      />
       {mode === 'live' ? (
-        <SpecimenCanvas state={state} active={visible} onHoverLabel={setLabel} />
-      ) : (
-        <SpecimenStill state={state} className="absolute inset-0" />
-      )}
+        <div className="absolute inset-0 specimen-enter">
+          <SpecimenCanvas state={state} active={visible} onHoverLabel={setLabel} />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -161,7 +178,10 @@ export function SpecimenRail() {
   /* Zones are declared in the page with data-specimen. The one nearest the
      middle of the viewport wins, which means the state changes as you read
      rather than snapping at an arbitrary threshold — and nothing about the
-     scroll itself is intercepted. */
+     scroll itself is intercepted.
+
+     The state change also announces the settle voice — once per change,
+     after the morph completes, never during it (Motion PRD 11.2). */
   useEffect(() => {
     const zones = Array.from(
       document.querySelectorAll<HTMLElement>('[data-specimen]'),
@@ -187,7 +207,11 @@ export function SpecimenRail() {
       setActive(anyOnScreen && tabVisible.current);
       if (best) {
         const next = best.el.dataset.specimen as SpecimenStateName;
-        setState((prev) => (prev === next ? prev : next));
+        setState((prev) => {
+          if (prev === next) return prev;
+          playSettleAfter(300); // after the morph, never during it
+          return next;
+        });
       }
     }
 
@@ -216,7 +240,9 @@ export function SpecimenRail() {
   return (
     <div
       ref={wrap}
-      className="pointer-events-none fixed inset-y-0 right-0 z-10 hidden w-[42vw] max-w-[44rem] lg:block"
+      data-specimen-source
+      data-cursor="drag"
+      className="specimen-drag pointer-events-none fixed inset-y-0 right-0 z-10 hidden w-[42vw] max-w-[44rem] lg:block"
       style={{
         opacity: active ? 1 : 0,
         transition: 'opacity 520ms var(--ease-settle)',

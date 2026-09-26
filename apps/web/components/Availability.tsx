@@ -33,7 +33,7 @@ export function AvailabilityLine({ tone = 'ink' }: { tone?: 'ink' | 'paper' }) {
   return (
     <p className={`micro ${color} flex items-center gap-2 normal-case tracking-[0.04em]`}>
       <span
-        className={`inline-block h-[7px] w-[7px] flex-none rounded-full ${dot}`}
+        className={`availability-dot inline-block h-[7px] w-[7px] flex-none rounded-full ${dot}`}
         aria-hidden="true"
       />
       <span>

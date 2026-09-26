@@ -4,6 +4,7 @@ import { ResumeLink } from '@/components/TrackedLinks';
 import { SpecimenInline } from '@/components/specimen/Specimen';
 import { FigureCaption } from '@/components/Primitives';
 import { AvailabilityLine } from '@/components/Availability';
+import { Counter } from '@/components/motion/Counter';
 
 /**
  * §01.
@@ -69,10 +70,12 @@ export function Hero() {
               {standfirst}
             </p>
             <div className="enter mt-10 flex flex-wrap items-center gap-3">
-              <a href="#work" className="btn btn--pigment">
+              <a href="#work" className="btn btn--pigment" data-magnetic data-cursor="view">
                 Read the work
               </a>
-              <ResumeLink className="btn">Download résumé</ResumeLink>
+              <ResumeLink className="btn" data-cursor="read">
+                Download résumé
+              </ResumeLink>
             </div>
           </div>
         </div>
@@ -92,22 +95,28 @@ export function Hero() {
           </figure>
         </div>
 
-        {/* The proof strip. Four facts, mono, hairline-separated. */}
-        <div className="mt-16 lg:mt-24 lg:max-w-[58%]">
-          <hr className="rule rule--draw" aria-hidden="true" />
-          <dl className="enter-stagger grid grid-cols-2 gap-x-6 sm:grid-cols-4">
-            {proofStrip.map((fact) => (
-              <div
-                key={fact.label}
-                className="border-b border-[var(--color-rule)] py-5 sm:border-b-0 sm:border-r sm:pr-5 sm:last:border-r-0"
-              >
-                <dt className="micro mb-1.5">{fact.label}</dt>
-                <dd className="mono m-0 text-[1.35rem] leading-none tracking-[-0.01em] text-[var(--color-ink)]">
-                  {fact.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
+        {/* The proof strip. Four facts, mono, hairline-separated. It pins
+            for the first part of the hero's exit on desktop while the
+            numbers count up once — then releases before it can become a
+            hostage situation (Motion PRD 10.4). */}
+        <div className="proof-strip-runway mt-16 lg:mt-24">
+          <div className="proof-strip lg:max-w-[58%]">
+            <hr className="rule rule--draw" aria-hidden="true" />
+            <dl className="enter-stagger grid grid-cols-2 gap-x-6 sm:grid-cols-4">
+              {proofStrip.map((fact, i) => (
+                <div
+                  key={fact.label}
+                  className="border-b border-[var(--color-rule)] py-5 sm:border-b-0 sm:border-r sm:pr-5 sm:last:border-r-0"
+                >
+                  <dt className="micro mb-1.5">{fact.label}</dt>
+                  <dd className="mono m-0 text-[1.35rem] leading-none tracking-[-0.01em] text-[var(--color-ink)]">
+                    {/* Values count; sources never move (RFD-09). */}
+                    <Counter value={fact.value} delay={200 + i * 90} />
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </div>
     </section>

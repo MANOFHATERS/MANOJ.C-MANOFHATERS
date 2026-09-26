@@ -18,6 +18,8 @@ import { ArrowNE, ArrowSwap } from '@/components/Icons';
 import { DrugOSDiagram } from '@/components/diagrams/DrugOSDiagram';
 import { TailGenDiagram } from '@/components/diagrams/TailGenDiagram';
 import { AtmosViewDiagram } from '@/components/diagrams/AtmosViewDiagram';
+import { CaseStudyToc } from '@/components/motion/CaseStudyToc';
+import { DrawOnView } from '@/components/motion/DrawOnView';
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
@@ -94,8 +96,21 @@ export default async function CaseStudy({
   const Diagram = DIAGRAMS[p.slug];
   const next = nextProject(p.slug);
 
+  /* The TOC rail (Motion PRD 10.6): the study's sections, inked as the
+     reader passes them, gliding under Lenis. */
+  const TOC = [
+    { id: 'abstract', label: 'Abstract' },
+    { id: 'problem', label: 'Problem' },
+    { id: 'architecture', label: 'Architecture' },
+    { id: 'hard-problems', label: 'Hard problems' },
+    { id: 'results', label: 'Results' },
+    { id: 'limitations', label: 'Limitations' },
+    { id: 'next', label: 'What’s next' },
+  ] as const;
+
   return (
     <article>
+      <CaseStudyToc items={TOC} />
       {/* ── Header plate ─────────────────────────────────────────────── */}
       <header className="shell pt-[calc(var(--masthead-h)+3rem)] lg:pt-[calc(var(--masthead-h)+5rem)]">
         <div className="grid12 items-start gap-y-12">
@@ -110,14 +125,16 @@ export default async function CaseStudy({
             </div>
 
             <h1
-              className="font-[family-name:var(--font-serif)] tracking-[-0.025em]"
+              className="font-[family-name:var(--font-serif)] tracking-[-0.025em] type-set-line"
               style={{
                 fontSize: 'clamp(2.5rem, 1.4rem + 4vw, 4.5rem)',
                 lineHeight: 1,
                 fontWeight: 350,
               }}
             >
-              {p.name}
+              {/* The title rises through its clip mask on arrival (T3's
+                  spirit): the typographic hand-off between pages. */}
+              <span>{p.name}</span>
             </h1>
 
             <p className="lede mt-6 max-w-[38ch] font-[family-name:var(--font-sans)]">
@@ -143,18 +160,20 @@ export default async function CaseStudy({
             </div>
 
             <div className="mt-9 flex flex-wrap gap-3">
-              <RepoLink href={p.repo} className="btn btn--pigment">
+              <RepoLink href={p.repo} className="btn btn--pigment" data-magnetic data-cursor="view">
                 View source on GitHub
                 <ArrowNE size={13} />
               </RepoLink>
-              <AskButton question={p.askPrompt} className="btn">
+              <AskButton question={p.askPrompt} className="btn" data-cursor="ask">
                 Ask about this project
               </AskButton>
             </div>
           </div>
 
+          {/* case-header-plate is the T2 destination: the morph target
+              for the shared-specimen transition from the work index. */}
           <figure className="col-span-12 lg:col-start-8 lg:col-span-5">
-            <div className="relative aspect-square w-full border border-[var(--border-subtle)] bg-[var(--bg-raised)]">
+            <div className="case-header-plate relative aspect-square w-full border border-[var(--border-subtle)] bg-[var(--bg-raised)]">
               <SpecimenInline state={p.specimen} className="absolute inset-0" />
             </div>
             <FigureCaption
@@ -227,11 +246,13 @@ export default async function CaseStudy({
             Architecture
           </Head>
 
+          {/* The diagram builds the system in front of the reader: paths
+              draw in sequence, staggered 80ms on the draw curve (10.7). */}
           <figure className="figure-enter mb-14">
             <div className="figure-plate overflow-x-auto">
-              <div className="min-w-[760px]">
+              <DrawOnView className="min-w-[760px]">
                 <Diagram />
-              </div>
+              </DrawOnView>
             </div>
             <FigureCaption id={p.architecture.figure}>
               {p.architecture.caption}
@@ -259,7 +280,7 @@ export default async function CaseStudy({
             Three hard problems
           </Head>
 
-          <ol className="m-0 list-none p-0">
+          <ol className="hard-problems enter-stagger m-0 list-none p-0">
             {p.hardProblems.map((hp, i) => (
               <li
                 key={hp.title}
@@ -397,7 +418,7 @@ export default async function CaseStudy({
         </div>
       </section>
 
-      {/* ── Footer of the case study ─────────────────────────────────── */}
+      {/* ── Footer of the case study ─────────────────────────────── */}
       <section className="shell pb-8">
         <Rule tone="ink" />
         <div className="grid12 mt-10 gap-y-10">
@@ -407,7 +428,7 @@ export default async function CaseStudy({
               {p.repoLabel}
             </RepoLink>
             <div className="mt-6">
-              <AskButton question={p.askPrompt} className="btn btn--quiet">
+              <AskButton question={p.askPrompt} className="btn btn--quiet" data-cursor="ask">
                 Ask about this project
               </AskButton>
             </div>
@@ -415,7 +436,9 @@ export default async function CaseStudy({
 
           <div className="col-span-12 lg:col-start-8 lg:col-span-5">
             <p className="micro mb-3">Next</p>
-            <Link href={`/work/${next.slug}`} className="group block">
+            {/* The next-project link runs T3: the quiet typographic
+                hand-off between two long-form pages. */}
+            <Link href={`/work/${next.slug}`} className="group block" data-cursor="read">
               <span
                 className="font-[family-name:var(--font-serif)] tracking-[-0.02em]"
                 style={{ fontSize: 'var(--step-h2)', lineHeight: 1.05, fontWeight: 350 }}

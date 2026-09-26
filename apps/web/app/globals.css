@@ -35,16 +35,49 @@
   --font-mono: var(--font-jbmono), ui-monospace, 'Cascadia Code', Menlo,
     Consolas, monospace;
 
-  /* ── Motion (PRD Ch. 10) ─────────────────────────────────────────────
-     Things settle, draw and turn. Nothing bounces, flies or glows.
-     --ease-out is the Lusion-measured curve; --ease-expo for long scales. */
-  --ease-settle: cubic-bezier(0.2, 0, 0, 1);
-  --ease-draw: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-out: cubic-bezier(0.4, 0, 0.1, 1);
-  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur-quick: 160ms;
-  --dur-base: 320ms;
-  --dur-slow: 560ms;
+  /* ── Motion Token System v1.0 (Motion PRD Ch. 6) ────────────────────
+     "Measured Precision": the site moves like a Swiss chronometer.
+     Two registers, strictly enforced — productive durations for interface
+     mechanics, expressive durations for storytelling. A hover may not borrow
+     an expressive duration and a reveal may not borrow a productive one;
+     mixing the registers is what makes sites feel sluggish AND theatrical.
+     Full reference is published on the colophon. */
+  /* Durations — productive register */
+  --dur-instant: 90ms; /* toggles, pressed flips, cursor state */
+  --dur-quick: 140ms; /* hover colour, focus rings, underline draws */
+  --dur-base: 220ms; /* button fills, arrow swaps, panel slides */
+  /* Durations — expressive register */
+  --dur-moderate: 320ms; /* card lifts, menu reveals, confirmations */
+  --dur-slow: 480ms; /* section entrances, figure settles */
+  --dur-scenic: 800ms; /* hero line rises, pinned beats, rule draws */
+  --dur-cinematic: 1200ms; /* route veils, specimen morphs */
+
+  /* Easings — productive register (Carbon-calibrated) */
+  --ease-standard: cubic-bezier(0.2, 0, 0.38, 0.9); /* state changes */
+  --ease-entrance: cubic-bezier(0, 0, 0.3, 1); /* content arriving */
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1); /* always faster out than in */
+  /* Easings — expressive register (site curves, retained) */
+  --ease-settle: cubic-bezier(0.2, 0, 0, 1); /* sections settling on paper */
+  --ease-draw: cubic-bezier(0.65, 0, 0.35, 1); /* lines drawing, symmetric */
+  --ease-out: cubic-bezier(0.4, 0, 0.1, 1); /* arrow swaps (Lusion-measured) */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1); /* long deceleration, veils */
+
+  /* Stagger laws (PRD 6.4) — arithmetic, never eyeballed */
+  --stagger-item: 40ms; /* lists of six or fewer */
+  --stagger-line: 90ms; /* typographic line reveals */
+  --stagger-cap: 240ms; /* total staggering ceiling for any list */
+
+  /* Parallax depth rates (PRD 6.5) — depth, never spectacle */
+  --parallax-figure: 0.94; /* figure plates within their sections */
+  --parallax-rule: 0.97; /* section rules, barely perceptible */
+  --parallax-cap: 96px; /* hard travel ceiling, any element */
+
+  /* Springs (PRD 6.3) — for physically tracked movement only.
+     DOM values are gsap.quickTo equivalents; R3F values live in
+     lib/motion/tokens.ts. Springs are interruptible by nature,
+     which is why Law 6 is satisfied automatically. */
+  --spring-cursor: 0.18s; /* cursor dot follow */
+  --spring-magnetic: 0.4s; /* magnetic hover displacement */
 
   /* ── Measure ─────────────────────────────────────────────────────── */
   --breakpoint-xs: 26rem;
@@ -204,7 +237,11 @@ body {
   font-variant-numeric: oldstyle-nums proportional-nums;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  /* clip, never hidden: overflow-x: hidden turns the body into a scroll
+     container, which silently kills every position: sticky inside it —
+     including the proof-strip pin. clip suppresses horizontal overflow
+     without creating a scrollport. */
+  overflow-x: clip;
 }
 
 /* The paper. A 3% grain, drawn once as an inline SVG turbulence and tiled.
@@ -464,10 +501,13 @@ body::after {
     color: inherit;
     background-image: linear-gradient(var(--action), var(--action));
     background-repeat: no-repeat;
-    background-position: 0 100%;
+    /* The draw direction is sourced from the pointer's entry side on
+       pointer-fine devices (Motion PRD 8.3); the default is left, so
+       no-JS, keyboard and touch visitors get the classic left draw. */
+    background-position: var(--enter-x, 0%) 100%;
     background-size: 0% 1px;
     padding-bottom: 0.08em;
-    transition: background-size var(--dur-base) var(--ease-draw),
+    transition: background-size var(--dur-quick) var(--ease-draw),
       color var(--dur-quick) var(--ease-settle);
   }
 
@@ -554,6 +594,26 @@ body::after {
     color: var(--paper-1);
   }
 
+  /* Press: sink 1px at the instant duration — weight, not paint (PRD 8.2). */
+  .btn:active {
+    transform: translateY(1px);
+    transition-duration: var(--dur-instant);
+  }
+
+  .btn[disabled],
+  .btn[aria-disabled='true'] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* Magnetic drift runs on transform via JS (components/motion); the CSS
+     keeps the colour channel on the quick productive curve. */
+  .btn--pigment,
+  .btn {
+    will-change: transform;
+  }
+
   .btn--pigment {
     border-color: var(--action);
     color: var(--action);
@@ -590,19 +650,22 @@ body::after {
   }
 
   .arrow-swap svg {
-    transition: transform 0.3s var(--ease-out);
+    transition: transform var(--dur-base) var(--ease-out),
+      opacity var(--dur-base) var(--ease-exit);
   }
 
   .arrow-swap .arrow-b {
     position: absolute;
     inset: 0;
     transform: translate3d(-1.2em, 1.9em, 0);
+    opacity: 0.55;
   }
 
   .arrow-swap:hover .arrow-a,
   .arrow-swap:focus-visible .arrow-a,
   .group:hover .arrow-swap .arrow-a {
     transform: translate3d(1.2em, -1.9em, 0);
+    opacity: 0; /* the swap reads as traffic, not teleportation (PRD 8.3) */
   }
 
   .arrow-swap:hover .arrow-b,
@@ -642,7 +705,7 @@ body::after {
   .roll > span {
     display: flex;
     flex-direction: column;
-    transition: transform 0.38s var(--ease-out);
+    transition: transform var(--dur-base) var(--ease-out);
   }
 
   .roll > span > span {
@@ -866,6 +929,390 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
+   THE MOTION LAYER v1.0 — Measured Precision (Motion PRD Ch. 7–11)
+
+   Everything below is the upgrade: the paper veil, the cursor, the
+   reading rule, magnetic buttons, the proof-strip pin, work-row intent,
+   skeletons, and the 404 constellation. Each block cites its chapter.
+   All of it is gated: JS-driven pieces mount only when the motion root
+   decides the device earns them (pointer-fine, no reduced motion).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── 10.6 — The reading progress rule ───────────────────────────────────
+   Pure CSS, off the main thread: a 2px pigment rule driven by the root
+   scroll timeline. Decorative, therefore aria-hidden in the markup. */
+@keyframes progress-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--action);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  z-index: 60;
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reading-progress {
+      animation: progress-grow linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+
+/* ── 8.4 — The cursor ────────────────────────────────────────────────────
+   A 6px IKB dot that follows the pointer on the cursor spring, expanding
+   to a 36px ring with a mono label over interactive regions. It never
+   mounts on touch-primary or reduced-motion devices, and the native text
+   caret is never replaced. */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: transparent;
+  contain: layout style;
+}
+
+.cursor-dot::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--action);
+  transform: scale(1);
+  transition: transform var(--dur-instant) var(--ease-standard);
+}
+
+.cursor-dot .cursor-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--action);
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity var(--dur-quick) var(--ease-standard),
+    transform var(--dur-quick) var(--ease-standard);
+}
+
+.cursor-dot[data-hover='true'] {
+  border-color: var(--action);
+}
+
+.cursor-dot[data-hover='true']::before {
+  transform: scale(0);
+}
+
+.cursor-dot[data-hover='true'] .cursor-label {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.cursor-dot[data-press='true']::before {
+  transform: scale(0.8);
+}
+
+.cursor-dot[data-hover='true'][data-press='true'] {
+  transform-origin: center;
+}
+
+/* The native cursor retires only over interactive regions, and only when
+   the motion root has mounted the custom one (html.motion-cursor). */
+@media (pointer: fine) {
+  html.motion-cursor a,
+  html.motion-cursor button,
+  html.motion-cursor [role='button'],
+  html.motion-cursor [data-cursor] {
+    cursor: none;
+  }
+}
+
+/* ── 7.2 / T1 — The paper veil ───────────────────────────────────────────
+   A sheet of the page's own paper, with a 1px IKB leading edge, sweeping
+   the old route away. The paper does the moving; the ink rides on it. */
+.route-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: var(--paper-1);
+  border-bottom: 1px solid var(--action);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  pointer-events: none;
+  contain: strict;
+}
+
+/* ── 8.2 — Magnetic buttons ──────────────────────────────────────────────
+   The drift itself is JS (gsap.quickTo on the magnetic spring). CSS owns
+   the label compress on press: 2% for the instant duration. */
+[data-magnetic] {
+  transform: translate3d(0, 0, 0);
+}
+
+[data-magnetic] > * {
+  transition: transform var(--dur-instant) var(--ease-standard);
+}
+
+[data-magnetic]:active > * {
+  transform: scale(0.98);
+}
+
+/* ── 8.3 — Pointer-entry-side underline ─────────────────────────────────
+   The draw direction is sourced from the pointer's entry side (Snellenberg
+   / Cuberto lineage). JS sets --enter-x on pointerenter; the default is
+   left, so no-JS and touch get the classic left-to-right draw. */
+.ink-link--intent,
+.intent-underline {
+  background-position: var(--enter-x, 0%) 100%;
+}
+
+/* ── 8.5 — Skeletons ─────────────────────────────────────────────────────
+   The Ask panel's answer area only: paper-raised tone, slow shimmer at
+   reduced opacity. Never bright, never grey-blue. */
+@keyframes skeleton-shimmer {
+  from { opacity: 0.45; }
+  50% { opacity: 0.8; }
+  to { opacity: 0.45; }
+}
+
+.skeleton-line {
+  height: 0.9em;
+  border-radius: 2px;
+  background: var(--bg-raised);
+  animation: skeleton-shimmer 1.6s var(--ease-standard) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-line {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/* ── 15.1 — The availability breath ──────────────────────────────────────
+   A single 240ms pigment pulse on load: the only autonomous DOM
+   animation shipped on the site. */
+@keyframes dot-breath {
+  0% { transform: scale(1); background: var(--action); }
+  50% { transform: scale(1.7); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .availability-dot {
+    animation: dot-breath 240ms var(--ease-settle) 320ms 1 both;
+  }
+}
+
+/* ── 10.4 — The proof-strip pin ───────────────────────────────────────────
+   The hero's four facts pin for the first part of the hero's exit on
+   desktop, then release before they can become a hostage situation.
+   The runway is real content — a spacer, because sticky is constrained
+   to the containing block's content box and padding does not extend it.
+   The page keeps scrolling; the reader keeps control. */
+@media (min-width: 64rem) {
+  .proof-strip-runway {
+    position: relative;
+  }
+
+  .proof-strip-runway::after {
+    content: '';
+    display: block;
+    height: 38vh;
+  }
+
+  .proof-strip {
+    position: sticky;
+    top: calc(var(--masthead-h) + 2.5rem);
+  }
+}
+
+/* ── 15.2 — Work rows: intent, not event ─────────────────────────────────
+   A 120ms transition-delay on hover filters drive-by passes without
+   adding perceptible delay to a real intention; no delay on leave.
+   Longhand properties so Tailwind's colour transitions compose instead
+   of being overridden by a shorthand. */
+.work-row {
+  transition-property: transform, color, background-color, border-color;
+  transition-duration: var(--dur-moderate), var(--dur-quick), var(--dur-quick), var(--dur-quick);
+  transition-timing-function: var(--ease-settle);
+}
+
+.work-row:hover {
+  transform: translateY(-2px);
+  transition-delay: 120ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-row:hover {
+    transform: none;
+  }
+}
+
+/* ── 15.4 / 404 — The constellation ───────────────────────────────────────
+   The "404" numeral set in the specimen's node language: dots on a grid,
+   drawing in on entry. Pigment marks a few positions — meaning, not
+   decoration. The component builds the grid; CSS draws it. */
+.constellation-dot {
+  transform: scale(0);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .constellation-dot {
+    animation: constellation-in var(--dur-moderate) var(--ease-entrance) both;
+    animation-delay: calc(var(--dot-index, 0) * 18ms);
+  }
+}
+
+@keyframes constellation-in {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ── 12.2 — Specimen loader constellation + canvas cross-fade ───────────
+   Edges draw over 800ms on the draw curve while WebGL warms, then the
+   live canvas cross-fades in at the moderate duration. The waiting state
+   previews the thing waited for — the only honest form of loader. */
+.specimen-loader {
+  display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .specimen-loader path,
+  .specimen-loader line,
+  .specimen-loader polyline {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: loader-draw var(--dur-scenic) var(--ease-draw) both;
+  }
+
+  /* The live canvas arrives over the still at the moderate duration. */
+  .specimen-enter {
+    animation: specimen-enter var(--dur-moderate) var(--ease-settle) both;
+  }
+}
+
+@keyframes loader-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes specimen-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── 9.4 — Specimen drag affordance ──────────────────────────────────────
+   The canvas is a touch surface: grab over the object, grabbing while
+   held. Vertical pan stays with the page on mobile inline specimens
+   (pan-y), so a drag never becomes a scroll trap; once a drag begins,
+   the surface owns the gesture. */
+.specimen-drag {
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+html[data-specimen-dragging='true'] .specimen-drag {
+  cursor: grabbing;
+  touch-action: none;
+}
+
+/* ── 10.7 — Hard problems: alternating emphasis ──────────────────────────
+   The hard-problem sections alternate a 4px indent emphasis as they pass
+   — felt, not seen. */
+@media (min-width: 64rem) {
+  .hard-problems > li:nth-child(even) {
+    padding-left: 4px;
+  }
+}
+
+/* ── 15.3 — Case-study TOC rail ──────────────────────────────────────────
+   A two-thousand-word study deserves the navigation dignity a printed
+   monograph gives its chapters. The current section is inked by JS. */
+.toc-rail {
+  position: fixed;
+  left: var(--grid-margin);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+}
+
+.toc-rail ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.toc-rail a {
+  font-family: var(--font-mono);
+  font-size: var(--step-micro);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--dur-quick) var(--ease-settle);
+}
+
+.toc-rail a[aria-current='true'] {
+  color: var(--ink-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-rail a {
+    transition: none;
+  }
+}
+
+/* ── 10.2 — Lenis, the library's own contract ────────────────────────
+   The recommended stylesheet from the Lenis README: the native CSS smooth
+   scroll must yield to the library when it owns the wheel, and the page
+   lock (menu, dialogs) uses lenis-stopped. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
    REDUCED MOTION
    All entrance and scroll-linked motion removed. Page transitions instant.
    The specimen switches to stills. Hover colour stays — it carries meaning.
@@ -889,10 +1336,21 @@ body::after {
   .enter-stagger > *,
   .rule--draw,
   .figure-enter,
-  .type-set-line > span {
+  .type-set-line > span,
+  .constellation-dot,
+  .work-row {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  /* Tier two keeps meaning, loses locomotion (Motion PRD Ch. 13):
+     the progress rule and the veil never appear; the skeleton holds
+     a static shape. State feedback — colour, focus, the latched
+     rating, the drawn check — is retained by the rules above. */
+  .reading-progress,
+  .route-veil {
+    display: none !important;
   }
 }
 

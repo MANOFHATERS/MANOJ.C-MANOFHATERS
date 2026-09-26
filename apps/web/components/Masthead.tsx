@@ -7,6 +7,7 @@ import { useAsk } from '@/components/ask/AskProvider';
 import { track } from '@/lib/events';
 import { AvailabilityLine } from '@/components/Availability';
 import { ArrowNE } from '@/components/Icons';
+import { SoundToggle } from '@/components/motion/SoundToggle';
 
 const SECTION_LABELS: Record<string, string> = {
   '01': 'Hero',
@@ -100,18 +101,25 @@ export function Masthead() {
     return () => observer.disconnect();
   }, []);
 
-  /* The overlay locks the page beneath it. */
+  /* The overlay locks the page beneath it — including the smooth-scroll
+     layer, which must be stopped for the lock to hold (Lenis contract). */
   useEffect(() => {
     if (!menuOpen) return;
     const scrollY = window.scrollY;
     document.body.style.position = 'fixed';
     document.body.style.top = `-${scrollY}px`;
     document.body.style.insetInline = '0';
+    void import('@/lib/motion/lenis').then(({ getLenis }) => {
+      getLenis()?.stop();
+    });
     return () => {
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.insetInline = '';
       window.scrollTo(0, scrollY);
+      void import('@/lib/motion/lenis').then(({ getLenis }) => {
+        getLenis()?.start();
+      });
     };
   }, [menuOpen]);
 
@@ -181,6 +189,7 @@ export function Masthead() {
               type="button"
               onClick={() => openAsk()}
               className="ui text-[var(--step-small)] ink-link"
+              data-cursor="ask"
             >
               Ask
             </button>
@@ -188,9 +197,13 @@ export function Masthead() {
               href={identity.emailHref}
               onClick={() => track('email_click')}
               className="ui text-[var(--step-small)] text-[var(--action)] ink-link"
+              data-cursor="write"
             >
               Email
             </a>
+            {/* The sound toggle — default off, one click, reversible
+                (Motion PRD 11.1). The glyph is drawn in the 1.5px grammar. */}
+            <SoundToggle />
           </div>
 
           {/* Phone — the overlay lives here */}
@@ -231,13 +244,14 @@ export function Masthead() {
         id="site-menu"
         aria-hidden={!menuOpen}
         inert={!menuOpen}
+        data-lenis-prevent
         className="no-print fixed inset-0 z-40 flex flex-col overflow-y-auto bg-[var(--bg)]"
         style={{
           opacity: menuOpen ? 1 : 0,
           visibility: menuOpen ? 'visible' : 'hidden',
           transition:
-            'opacity 420ms var(--ease-settle), visibility 0s linear ' +
-            (menuOpen ? '0s' : '420ms'),
+            'opacity var(--dur-moderate) var(--ease-settle), visibility 0s linear ' +
+            (menuOpen ? '0s' : 'var(--dur-moderate)'),
         }}
       >
         <div
@@ -252,7 +266,9 @@ export function Masthead() {
                 style={{
                   opacity: menuOpen ? 1 : 0,
                   transform: menuOpen ? 'translateY(0)' : 'translateY(14px)',
-                  transition: `opacity 480ms var(--ease-settle) ${90 + i * 60}ms, transform 480ms var(--ease-settle) ${90 + i * 60}ms`,
+                  /* Tightened to the moderate duration with the 40ms item
+                     stagger (Motion PRD 6.4 / 15.4). */
+                  transition: `opacity var(--dur-moderate) var(--ease-settle) ${60 + i * 40}ms, transform var(--dur-moderate) var(--ease-settle) ${60 + i * 40}ms`,
                 }}
               >
                 {item.ask ? (
@@ -300,10 +316,13 @@ export function Masthead() {
             className="mt-10 flex flex-col gap-6"
             style={{
               opacity: menuOpen ? 1 : 0,
-              transition: 'opacity 480ms var(--ease-settle) 460ms',
+              transition: 'opacity var(--dur-moderate) var(--ease-settle) 320ms',
             }}
           >
             <ul className="m-0 flex flex-wrap gap-x-6 gap-y-2 list-none p-0">
+              <li>
+                <SoundToggle className="!text-[var(--step-small)]" />
+              </li>
               {socialLinks.map((s) => (
                 <li key={s.label}>
                   <a

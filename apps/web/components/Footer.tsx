@@ -4,6 +4,7 @@ import { InkLink } from '@/components/Primitives';
 import { AvailabilityLine } from '@/components/Availability';
 import { EmailLink, ResumeLink } from '@/components/TrackedLinks';
 import { ArrowNE } from '@/components/Icons';
+import { FooterApproach } from '@/components/motion/FooterApproach';
 
 /**
  * The ink band (PRD Ch. 11.1): the single loudest moment on the page.
@@ -15,7 +16,8 @@ import { ArrowNE } from '@/components/Icons';
 export function Footer() {
   return (
     <footer className="bg-[var(--band-bg)] text-[var(--band-fg)]">
-      {/* The mega CTA band */}
+      {/* The mega CTA band — approaches with physical weight (PRD 10.5) */}
+      <FooterApproach>
       <div className="shell pb-14 pt-20 lg:pt-28">
         <div className="grid12 gap-y-10">
           <div className="col-span-12 lg:col-span-9">
@@ -84,6 +86,7 @@ export function Footer() {
           </nav>
         </div>
       </div>
+      </FooterApproach>
 
       {/* The base line: socials as text, provenance, time */}
       <div className="shell border-t border-[var(--band-hairline)] pb-8 pt-7">
