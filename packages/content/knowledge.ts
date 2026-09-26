@@ -17,6 +17,7 @@ import {
   contact,
   education,
   identity,
+  personal,
   principles,
   proofStrip,
   recognition,
@@ -56,7 +57,15 @@ add({
   title: 'How to contact Manoj',
   href: '/#contact',
   section: '08',
-  text: `Manoj can be reached by email at ${identity.email}. His phone number is ${identity.phone}. His GitHub is ${identity.githubHandle} and his LinkedIn is ${identity.linkedinHandle}. ${contact.openTo} Email is the most reliable way to reach him.`,
+  text: `Manoj can be reached by email at ${identity.email} — that is his mail id, and email is the most reliable way to reach him. His mobile number is ${identity.phone} (phone). He is on GitHub at ${identity.githubHandle} and on LinkedIn at ${identity.linkedinHandle}. ${contact.openTo}`,
+});
+
+add({
+  id: 'id-personal',
+  title: 'Age and where Manoj lives',
+  href: '/#about',
+  section: '06',
+  text: `Manoj is ${personal.age} years old. He lives in Kamanahalli, on ITC Road, Bengaluru (Bangalore), Karnataka, India. He is from Bengaluru — the same city he studies and builds in — and he lives there now.`,
 });
 
 add({
@@ -72,7 +81,7 @@ add({
   title: 'Education',
   href: '/#about',
   section: '06',
-  text: `Manoj studies at Atria University in Bengaluru. He is a third-year undergraduate there, reading Digital Transformation with a minor in AI and ML. His CGPA is 8.1. He attended Sri Chaitanya for Class 12 and Maruthi Vidyalaya for Class 10. ${education
+  text: `Manoj studies at Atria University in Bengaluru — that is his college. He is a third-year undergraduate there. His field of study is Digital Transformation with a minor in AI and ML, and his CGPA is 8.1. He attended Sri Chaitanya for Class 12 and Maruthi Vidyalaya for Class 10. ${education
     .map((e) => e.institution)
     .join(', ')}.`,
 });
@@ -82,7 +91,7 @@ add({
   title: 'Headline achievement',
   href: '/#recognition',
   section: '02',
-  text: `DrugOS took first place in a college-level competition and was selected for the TiE global event. Manoj was the originator, architect and project lead for Team Cosmic, a team of four. ${proofStrip
+  text: `DrugOS took first place in a college-level competition and was selected for the TiE global event — the headline win on this site. Manoj was the originator, architect and project lead for Team Cosmic, a team of four. ${proofStrip
     .map((p) => `${p.value} ${p.label}`)
     .join('; ')}.`,
 });
@@ -165,7 +174,11 @@ for (const p of projects) {
     title: `${p.name} — role, stack and repository`,
     href,
     section: '03',
-    text: `On ${p.name}, Manoj's role was ${p.role}, ${p.team}, in ${p.year}. The repository is ${p.repoLabel}. The stack is ${p.stack.join(', ')}. Its headline number is ${p.headline.value} — ${p.headline.label}.`,
+    text: `On ${p.name}, Manoj's role was ${p.role}, ${p.team}, in ${p.year}. The repository is ${p.repoLabel}.${
+      p.liveUrl
+        ? ` It is deployed and live at ${p.liveUrl} — you can use the real website there.`
+        : ` It is a research system: open source on GitHub, with no public deployment.`
+    } The stack is ${p.stack.join(', ')}. Its headline number is ${p.headline.value} — ${p.headline.label}.`,
   });
 
   p.abstract.forEach((para, i) => {
@@ -251,9 +264,17 @@ for (const p of projects) {
 /* ── The site itself ──────────────────────────────────────────────────── */
 
 add({
+  id: 'id-live',
+  title: 'Are the projects deployed? Live links',
+  href: '/#work',
+  section: '03',
+  text: `Yes — two of the three systems are deployed, live and ready to use. TailGen is deployed on Vercel at https://tailgen-steel.vercel.app (the marketing site, risk console, developer portal and governance console). AtmosView is deployed on Vercel at https://atmosview-weather.vercel.app (the weather and air-quality dashboard). DrugOS is research code: its repository is open on GitHub, and it has no public deployment. Each case study links to its own live site and repository.`,
+});
+
+add({
   id: 'site-colophon',
   title: 'How this site is built',
-  href: '/colophon',
+  href: '/',
   section: '09',
   text: `This portfolio is built with ${colophon.stack
     .map(([k, v]) => `${k}: ${v}`)
@@ -265,7 +286,7 @@ add({
 add({
   id: 'site-privacy',
   title: 'What this site stores about you',
-  href: '/colophon#privacy',
+  href: '/#contact',
   section: '09',
   text: `This is everything the site stores about a visitor, and for how long. ${colophon.privacy.join(' ')}`,
 });
@@ -315,6 +336,16 @@ export const faq: readonly FaqItem[] = [
     href: '/work/atmosview',
   },
   {
+    q: "What is Manoj's email id?",
+    a: `His email id is ${identity.email}. Email is the most reliable way to reach him — he reads everything that arrives there.`,
+    href: '/#contact',
+  },
+  {
+    q: 'Is TailGen deployed? Where can I use it?',
+    a: 'Yes — TailGen is deployed and live at https://tailgen-steel.vercel.app: the marketing site, the risk console, the developer portal and the governance console. The code is on GitHub at MANOFHATERS/tailgen.',
+    href: '/work/tailgen',
+  },
+  {
     q: 'What is his tech stack?',
     a: 'Python, TypeScript, React and Next.js, FastAPI and Express, PyTorch and PyTorch Geometric, PostgreSQL, Neo4j and MongoDB, with Docker, GitHub Actions and pytest in the practice column.',
     href: '/#capabilities',
@@ -325,14 +356,54 @@ export const faq: readonly FaqItem[] = [
     href: '/#about',
   },
   {
+    q: 'Which college does he study at?',
+    a: 'His college is Atria University in Bengaluru. Third year, Digital Transformation with a minor in AI & ML, CGPA 8.1.',
+    href: '/#about',
+  },
+  {
+    q: 'How old is he?',
+    a: `He is ${personal.age} years old.`,
+    href: '/#about',
+  },
+  {
+    q: 'Where does he live?',
+    a: `He is ${personal.age} and lives in Kamanahalli, on ITC Road, Bengaluru (Bangalore), Karnataka, India.`,
+    href: '/#about',
+  },
+  {
+    q: 'Where is he from?',
+    a: 'He is from Bengaluru — the same city he lives in now (Kamanahalli, ITC Road) and studies in at Atria University.',
+    href: '/#about',
+  },
+  {
     q: 'How can I contact him?',
-    a: `Email ${identity.email}, or call ${identity.phone}. He is also on GitHub at ${identity.githubHandle} and LinkedIn at ${identity.linkedinHandle}.`,
+    a: `Email ${identity.email}, or call his mobile at ${identity.phone}. He is also on GitHub at ${identity.githubHandle} and LinkedIn at ${identity.linkedinHandle}.`,
+    href: '/#contact',
+  },
+  {
+    q: 'What is his LinkedIn?',
+    a: `His LinkedIn is ${identity.linkedinHandle} — ${identity.linkedin}.`,
+    href: '/#contact',
+  },
+  {
+    q: 'What is his mobile number?',
+    a: `His mobile number is ${identity.phone}. Email is still the most reliable way to reach him.`,
     href: '/#contact',
   },
   {
     q: 'Is he open to internships?',
     a: contact.openTo,
     href: '/#contact',
+  },
+  {
+    q: 'Is AtmosView deployed?',
+    a: 'Yes — AtmosView is live at https://atmosview-weather.vercel.app: the weather and air-quality dashboard, provider disagreement included. The code is on GitHub at MANOFHATERS/atmosview-weather.',
+    href: '/work/atmosview',
+  },
+  {
+    q: 'Is DrugOS deployed?',
+    a: 'DrugOS is not publicly deployed — it is a research system. Its repository is open on GitHub at MANOFHATERS/autonomous-drug-repurposing.',
+    href: '/work/drugos',
   },
   {
     q: 'What does not work in his projects?',
@@ -351,7 +422,7 @@ export const faq: readonly FaqItem[] = [
   },
   {
     q: 'How was this site built?',
-    a: 'Next.js 16 and React 19, statically generated, with Tailwind v4 tokens, one three.js object loaded after the text is readable, and native CSS scroll-driven animation rather than an animation library. The guide runs on Cloudflare Workers AI.',
-    href: '/colophon',
+    a: 'Next.js 16 and React 19, statically generated, with Tailwind v4 design tokens, GSAP and Lenis for motion, paper-veil page transitions, and a Cloudflare Workers AI guide that falls back to a local extractive guide in the browser.',
+    href: '/',
   },
 ];

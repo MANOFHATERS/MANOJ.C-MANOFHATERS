@@ -41,6 +41,10 @@ export interface Project {
   readonly year: string;
   readonly repo: string;
   readonly repoLabel: string;
+  /** Live deployment URL, when the system is publicly deployed. */
+  readonly liveUrl?: string;
+  /** The bare host shown under the live-site button, e.g. tailgen-steel.vercel.app. */
+  readonly liveLabel?: string;
   readonly specimen: SpecimenState;
   readonly stack: readonly string[];
   /** One metric, shown on the home-page index plate. */
@@ -233,6 +237,8 @@ export const projects: readonly Project[] = [
     year: '2026',
     repo: 'https://github.com/MANOFHATERS/tailgen',
     repoLabel: 'MANOFHATERS/tailgen',
+    liveUrl: 'https://tailgen-steel.vercel.app/',
+    liveLabel: 'tailgen-steel.vercel.app',
     specimen: 'tail',
     stack: [
       'PyTorch',
@@ -385,6 +391,8 @@ export const projects: readonly Project[] = [
     year: '2026',
     repo: 'https://github.com/MANOFHATERS/atmosview-weather',
     repoLabel: 'MANOFHATERS/atmosview-weather',
+    liveUrl: 'https://atmosview-weather.vercel.app/',
+    liveLabel: 'atmosview-weather.vercel.app',
     specimen: 'field',
     stack: [
       'React 19',

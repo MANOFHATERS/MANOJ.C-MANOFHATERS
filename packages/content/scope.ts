@@ -69,13 +69,13 @@ const INJECTION = [
   /\bdo not follow\b/i,
 ];
 
-/** About a person, rather than about work published on this site. */
+/** About a person, rather than about work published on this site. Age and
+ * neighbourhood are published on the site (profile.ts `personal`), so they
+ * are answerable; a date of birth is not published and will not be guessed. */
 const PRIVATE = [
-  /\b(home |postal |residential |street )?address\b/i,
-  /\bwhere does he live\b/i,
+  /\b(date of birth|dob|birthday)\b/i,
   /\bsalary|compensation|ctc|package expectation|how much (does|would) he (earn|want|charge)\b/i,
   /\bfamily|parents?|mother|father|sibling|brother|sister|wife|husband|girlfriend|boyfriend|married|marital\b/i,
-  /\b(date of birth|dob|birthday|how old is he|his age)\b/i,
   /\breligion|caste|community|cast\b/i,
   /\bteam ?mates?\b.*\bname|\bname\b.*\bteam ?mates?\b/i,
   /\bby name\b/i,
@@ -87,7 +87,7 @@ const OFF_TOPIC = [
   /\bwrite me\b/i,
   // Anything of the shape "write/generate/create … a Python script", with or
   // without a language sitting between the article and the noun.
-  /\b(write|generate|produce|create|give me|send me|show me)\b[^.?!]{0,30}?\b(script|code|program|function|snippet|query|regex|essay|poem|email|letter|story|sql)\b/i,
+  /\b(write|generate|produce|create|give me|send me|show me)\b[^.?!]{0,30}?\b(script|code|program|function|snippet|query|regex|essay|poem|story|sql)\b/i,
   /\bhow do i (write|code|implement|build|fix|install)\b/i,
   /\b(translate|summari[sz]e|proofread|debug|refactor) (this|my|the following)\b/i,
   /\bwho won\b/i,
@@ -184,9 +184,63 @@ const SENTENCE_WORDS = new Set([
 ]);
 
 /**
+ * Damerau–Levenshtein distance capped at 1: a single typo, insertion,
+ * deletion or transposition. Enough to forgive "Taiglen" for TailGen or
+ * "Linkdin" for LinkedIn without opening the gate to genuinely unknown
+ * names. Restricted to longer words, where a one-letter slip is unlikely
+ * to turn one real word into another.
+ */
+function withinOneEdit(a: string, b: string): boolean {
+  if (a === b) return true;
+  if (Math.abs(a.length - b.length) > 1) return false;
+
+  if (a.length === b.length) {
+    // Substitution, or one adjacent transposition.
+    let diff = -1;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) {
+        if (diff !== -1) {
+          return i === diff + 1 && a[diff] === b[i] && a[i] === b[diff];
+        }
+        diff = i;
+      }
+    }
+    return true;
+  }
+
+  // One insertion or deletion.
+  const [short, long] = a.length < b.length ? [a, b] : [b, a];
+  let i = 0;
+  let j = 0;
+  let skipped = false;
+  while (i < short.length && j < long.length) {
+    if (short[i] === long[j]) {
+      i++;
+      j++;
+      continue;
+    }
+    if (skipped) return false;
+    skipped = true;
+    j++;
+  }
+  return true;
+}
+
+/** True when a word is a word the site knows, or one slip away from one. */
+function knownNearMiss(word: string, vocabulary: ReadonlySet<string>): boolean {
+  if (word.length < 5) return false;
+  for (const v of vocabulary) {
+    if (Math.abs(v.length - word.length) > 1) continue;
+    if (withinOneEdit(word, v)) return true;
+  }
+  return false;
+}
+
+/**
  * True when the question names something the site has never mentioned —
  * "his Google internship", "the LTCM project". The presupposition is false,
  * and answering from the nearest chunk would dress a guess up as an answer.
+ * A name one typo away from a known one is treated as known.
  */
 export function namesUnknownEntity(
   message: string,
@@ -202,6 +256,7 @@ export function namesUnknownEntity(
     const lower = raw.toLowerCase();
     if (SENTENCE_WORDS.has(lower)) continue;
     if (vocabulary.has(lower)) continue;
+    if (knownNearMiss(lower, vocabulary)) continue;
     return true;
   }
   return false;

@@ -44,6 +44,13 @@ export const identity = {
 export const standfirst =
   'Full-stack engineer and ML systems builder · 3rd year, Digital Transformation with a minor in AI & ML, Atria University, Bengaluru';
 
+/** Personal facts, published with consent. The guide cites this file only. */
+export const personal = {
+  age: 21,
+  livesIn: 'Kamanahalli, on ITC Road, Bengaluru (Bangalore), Karnataka, India',
+  from: 'Bengaluru',
+} as const;
+
 /** §01 — the four facts under the hero, set in mono and separated by hairlines. */
 export const proofStrip = [
   { value: '1st place', label: 'DrugOS' },
@@ -177,7 +184,7 @@ export const about = {
 export const suggestedQuestions = [
   'What did Manoj win with DrugOS?',
   'Explain TailGen simply',
-  'What is his tech stack?',
+  'Are his projects deployed live?',
   'How can I contact him?',
 ] as const;
 
@@ -189,7 +196,7 @@ export const contact = {
 } as const;
 
 export const colophon = {
-  note: 'Built by Manoj C. Hosted for ₹0.',
+  note: 'Built by Manoj C.',
   typefaces: [
     {
       name: 'Newsreader',
@@ -213,8 +220,7 @@ export const colophon = {
   stack: [
     ['Framework', 'Next.js 16, React 19, TypeScript. Every route statically generated.'],
     ['Styling', 'Tailwind CSS v4, with the design tokens as CSS custom properties.'],
-    ['3D', 'three.js with React Three Fiber v9. One object, loaded after the text is readable.'],
-    ['Motion', 'Native CSS scroll-driven animations. No animation library in the bundle.'],
+    ['Motion', 'GSAP for choreography and page veils, Lenis for smooth scroll, native CSS scroll-driven entrances.'],
     ['API', 'Cloudflare Workers with Hono, and Workers AI for the guide.'],
     ['Data', 'Neon Postgres. Chat transcripts for 90 days, then deleted.'],
     ['Hosting', 'Vercel Hobby for the site, Cloudflare Workers for the API.'],

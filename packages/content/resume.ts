@@ -76,7 +76,7 @@ export const resumeSections: readonly ResumeSection[] = [
       },
       {
         title: 'TailGen — Generative Tail-Risk Engine',
-        meta: 'Solo',
+        meta: 'Solo · Live: tailgen-steel.vercel.app',
         bullets: [
           'Built a score-based diffusion model (Diffusion Transformer, 541K parameters) in PyTorch that generates market scenarios with realistic fat tails — Hill alpha 2.51 against a real 2.66.',
           'On the held-out COVID window, 99% VaR breaches fell to 8 of 35 days against 12 for rolling Gaussian VaR, while pricing the 1% tail 28% wider.',
@@ -85,7 +85,7 @@ export const resumeSections: readonly ResumeSection[] = [
       },
       {
         title: 'AtmosView — Weather & Air-Quality Intelligence',
-        meta: 'Solo',
+        meta: 'Solo · Live: atmosview-weather.vercel.app',
         bullets: [
           'Built a React and Node/Express platform aggregating four weather and AQI providers across 39 endpoints, showing where they disagree rather than averaging them away.',
           'Implemented per-provider graceful degradation across four layers, so a dead upstream costs one row of a breakdown table rather than the page.',

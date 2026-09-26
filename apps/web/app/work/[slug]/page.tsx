@@ -14,6 +14,7 @@ import {
 } from '@/components/Primitives';
 import { AskButton, RepoLink } from '@/components/TrackedLinks';
 import { ArrowNE, ArrowSwap } from '@/components/Icons';
+import { CasePlate } from '@/components/work/CasePlate';
 import { DrugOSDiagram } from '@/components/diagrams/DrugOSDiagram';
 import { TailGenDiagram } from '@/components/diagrams/TailGenDiagram';
 import { AtmosViewDiagram } from '@/components/diagrams/AtmosViewDiagram';
@@ -99,7 +100,7 @@ export default async function CaseStudy({
       {/* ── Header plate ─────────────────────────────────────────────── */}
       <header className="shell pt-[calc(var(--masthead-h)+3rem)] lg:pt-[calc(var(--masthead-h)+5rem)]">
         <div className="grid12 items-start gap-y-12">
-          <div className="col-span-12 lg:col-span-8">
+          <div className="col-span-12 lg:col-span-7">
             <div className="mb-7 flex items-baseline gap-4">
               <Link href="/#work" className="micro ink-link">
                 Selected work
@@ -141,15 +142,19 @@ export default async function CaseStudy({
               <StackChips items={p.stack} />
             </div>
 
-            <div className="mt-9 flex flex-wrap gap-3">
-              <RepoLink href={p.repo} className="btn btn--pigment" data-magnetic data-cursor="view">
-                View source on GitHub
-                <ArrowNE size={13} />
-              </RepoLink>
+            {/* The primary doors out of the page live on the dossier plate;
+                the text column keeps the one conversation starter. */}
+            <div className="mt-9">
               <AskButton question={p.askPrompt} className="btn" data-cursor="ask">
                 Ask about this project
               </AskButton>
             </div>
+          </div>
+
+          {/* The dossier plate: case number, at-a-glance metric, deployment
+              status and the doors out — the right-hand instrument column. */}
+          <div className="col-span-12 lg:col-start-9 lg:col-span-4">
+            <CasePlate p={p} />
           </div>
         </div>
       </header>
@@ -392,6 +397,17 @@ export default async function CaseStudy({
             <RepoLink href={p.repo} className="ink-link mono text-[0.9rem] break-all">
               {p.repoLabel}
             </RepoLink>
+            {p.liveUrl ? (
+              <p className="mt-3">
+                <RepoLink
+                  href={p.liveUrl}
+                  className="mono inline-flex items-center gap-1.5 text-[0.82rem] text-[var(--color-signal-ok)] ink-link"
+                >
+                  Live deployment — {p.liveLabel}
+                  <ArrowNE size={11} />
+                </RepoLink>
+              </p>
+            ) : null}
             <div className="mt-6">
               <AskButton question={p.askPrompt} className="btn btn--quiet" data-cursor="ask">
                 Ask about this project

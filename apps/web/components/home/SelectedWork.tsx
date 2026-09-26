@@ -85,6 +85,15 @@ export function SelectedWork() {
                       <p className="mono text-[var(--step-micro)] text-[var(--text-muted)] lg:text-right mt-1.5">
                         {p.year}
                       </p>
+                      {p.liveUrl ? (
+                        <p className="mono mt-1.5 mb-0 flex items-center gap-1.5 text-[var(--step-micro)] tracking-[0.04em] text-[var(--color-signal-ok)] lg:justify-end">
+                          <span
+                            aria-hidden="true"
+                            className="inline-block h-[6px] w-[6px] flex-none rounded-full bg-current"
+                          />
+                          Deployed · live
+                        </p>
+                      ) : null}
                     </div>
                   </div>
 
