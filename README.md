@@ -204,5 +204,5 @@ For working on the API and the database, the scripts are in
   is a salted daily-rotating hash, transcripts are deleted after 90 days.
 
 Working with an AI agent on this repo? It reads [CLAUDE.md](./CLAUDE.md) —
-the plan-and-spec document: what is built, how the pieces fit, the commands,
-and what is pending.
+the operating manual (commands, invariants) — and [SPEC.md](./SPEC.md) —
+the plan: core features, component inventory, done vs pending.
