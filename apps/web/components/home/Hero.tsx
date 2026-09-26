@@ -3,6 +3,7 @@ import { SectionMark } from '@/components/Section';
 import { ResumeLink } from '@/components/TrackedLinks';
 import { AvailabilityLine } from '@/components/Availability';
 import { Counter } from '@/components/motion/Counter';
+import { HeroPlate } from '@/components/home/HeroPlate';
 
 /**
  * §01.
@@ -74,6 +75,14 @@ export function Hero() {
                 Download résumé
               </ResumeLink>
             </div>
+          </div>
+
+          {/* The field record — the hero's right-hand instrument. The
+              text column spans eight; the plate files the ninth through
+              the twelfth. Desktop composition only: the mobile hero is
+              already complete, and a hidden plate adds zero shift. */}
+          <div className="hidden lg:col-span-4 lg:block lg:mt-24">
+            <HeroPlate />
           </div>
         </div>
 

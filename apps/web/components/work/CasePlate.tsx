@@ -18,7 +18,7 @@ export function CasePlate({ p }: { p: Project }) {
   return (
     <aside
       aria-label={`${p.name} at a glance`}
-      className="figure-enter border border-[var(--color-rule)] bg-[var(--color-paper-raised)] px-7 py-6 lg:mt-12"
+      className="figure-enter plate-lift border border-[var(--color-rule)] bg-[var(--color-paper-raised)] px-7 py-6 lg:mt-12"
     >
       {/* Case file header — the archive stamp. */}
       <div className="flex items-baseline justify-between gap-4">

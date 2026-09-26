@@ -1145,6 +1145,89 @@ body::after {
   }
 }
 
+/* ── 10.5 — The hero field-record plate ──────────────────────────────────
+   The hero's right-hand instrument: hairline box, raised paper, a clock
+   that ticks and a transcript that types itself once per read. The crop
+   crosses sit outside the corners — the atelier's registration marks,
+   hairline and easy to ignore. */
+.hero-plate {
+  position: relative;
+}
+
+.reg-mark {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  pointer-events: none;
+}
+
+.reg-mark::before,
+.reg-mark::after {
+  content: '';
+  position: absolute;
+  background: var(--color-rule);
+}
+
+.reg-mark::before {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+}
+
+.reg-mark::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+}
+
+.reg-mark--tl {
+  top: -18px;
+  left: -18px;
+}
+
+.reg-mark--br {
+  right: -18px;
+  bottom: -18px;
+}
+
+/* The plate lift: a hard offset shadow in 5% ink — the letterpress cue
+   for an object laid onto the page, shared by every plate in the system
+   (the hero field record, the case-file dossier). No blur, no softness:
+   paper does not glow. */
+.plate-lift {
+  box-shadow: 3px 3px 0 0 color-mix(in srgb, var(--color-ink) 5%, transparent);
+}
+
+/* The transcript cursor: a pigment block that blinks in hard steps, the
+   way a real terminal does. It is the only pigment on the plate. */
+.hero-cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  margin-left: 0.15em;
+  background: var(--action);
+  transform: translateY(0.16em);
+}
+
+@keyframes hero-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-cursor {
+    animation: hero-blink 1.06s step-end infinite;
+  }
+}
+
 /* ── 15.2 — Work rows: intent, not event ─────────────────────────────────
    A 120ms transition-delay on hover filters drive-by passes without
    adding perceptible delay to a real intention; no delay on leave.
