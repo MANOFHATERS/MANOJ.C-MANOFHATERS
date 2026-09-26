@@ -62,7 +62,7 @@ export function Portrait({ src, alt }: { src: string; alt: string }) {
               style={{ fontSize: 'clamp(3.5rem, 10vw, 6rem)', lineHeight: 1 }}
               aria-hidden="true"
             >
-              §
+              M
             </span>
             <p className="micro mt-4 leading-[1.7]">
               Plate reserved — photograph pending

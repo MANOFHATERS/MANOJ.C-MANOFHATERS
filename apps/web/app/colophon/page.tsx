@@ -16,9 +16,6 @@ export default function Colophon() {
       <div className="grid12">
         <div className="col-span-12 lg:col-start-3 lg:col-span-8">
           <div className="mb-6 flex items-baseline gap-4">
-            <span className="mono text-[var(--step-micro)] tracking-[0.06em] text-[var(--color-pigment)]">
-              §09
-            </span>
             <span className="micro">Colophon</span>
           </div>
 

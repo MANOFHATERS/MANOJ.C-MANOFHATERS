@@ -22,7 +22,7 @@ export function Footer() {
         <div className="grid12 gap-y-10">
           <div className="col-span-12 lg:col-span-9">
             <p className="mono mb-6 text-[var(--step-micro)] uppercase tracking-[0.08em] text-[var(--band-muted)]">
-              §08 — Contact
+              Contact
             </p>
             <h2
               className="font-[family-name:var(--font-serif)] tracking-[-0.02em]"
@@ -116,17 +116,10 @@ export function Footer() {
           </ul>
 
           <p className="mono text-[var(--step-micro)] text-[var(--band-muted)]">
-            Set in Newsreader, Switzer &amp; JetBrains Mono · Light only ·
-            Hosted for ₹0
-          </p>
-        </div>
-
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-          <p className="mono text-[var(--step-micro)] text-[var(--band-muted)]">
             © {new Date().getFullYear()} {identity.name} · Bengaluru
           </p>
           <p className="mono text-[var(--step-micro)] text-[var(--band-muted)]">
-            Updated {site.updated} ·{' '}
+            <span className="sr-only">Site — </span>
             <InkLink
               href={site.url.replace('https://', 'https://')}
               className="text-[var(--band-muted)]"

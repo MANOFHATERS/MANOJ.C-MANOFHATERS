@@ -3,18 +3,18 @@ import type { ReactNode } from 'react';
 /**
  * A numbered section, the way a monograph numbers them.
  *
- * The § device is not ornament. Manoj's DrugOS specification governed a
- * four-person build through numbered sections, cited 547 times in that
- * codebase; the site borrows the convention because it is his, not because
- * it is decorative.
+ * The numbered-section device is not ornament. Manoj's DrugOS
+ * specification governed a four-person build through numbered sections,
+ * cited 547 times in that codebase; the site borrows the convention
+ * because it is his, not because it is decorative.
  */
 
 interface SectionProps {
-  /** Two digits, e.g. "03". Rendered as §03. */
+  /** Two digits, e.g. "03". Rendered as a plain section number. */
   mark: string;
   id: string;
   title: string;
-  /** Shown beside the § mark instead of the heading, when the heading is set large. */
+  /** Shown beside the section number instead of the heading, when the heading is set large. */
   kicker?: string;
   children: ReactNode;
   /** Hide the visible heading but keep it for screen readers. */
@@ -37,7 +37,6 @@ export function SectionMark({
       data-mark={mark}
       aria-hidden="true"
     >
-      <span className="mark-glyph">§</span>
       <span>{mark}</span>
       {label ? <span className="ml-2 tracking-[0.08em] uppercase">{label}</span> : null}
     </span>

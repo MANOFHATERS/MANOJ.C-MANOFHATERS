@@ -31,7 +31,7 @@ export interface Chunk {
   readonly id: string;
   readonly title: string;
   readonly href: string;
-  /** The section mark this chunk belongs to, e.g. "§03". */
+  /** The section mark this chunk belongs to, e.g. "03". */
   readonly section: string;
   readonly text: string;
 }
@@ -47,7 +47,7 @@ add({
   id: 'id-who',
   title: 'Who Manoj is',
   href: '/#top',
-  section: '§01',
+  section: '01',
   text: `${identity.name} is a ${identity.role.replace(' · ', ' and ')} based in ${identity.location}. ${standfirst}. The thesis of his work is: "${site.thesis}" He has shipped three systems: DrugOS, TailGen and AtmosView.`,
 });
 
@@ -55,7 +55,7 @@ add({
   id: 'id-contact',
   title: 'How to contact Manoj',
   href: '/#contact',
-  section: '§08',
+  section: '08',
   text: `Manoj can be reached by email at ${identity.email}. His phone number is ${identity.phone}. His GitHub is ${identity.githubHandle} and his LinkedIn is ${identity.linkedinHandle}. ${contact.openTo} Email is the most reliable way to reach him.`,
 });
 
@@ -63,7 +63,7 @@ add({
   id: 'id-open-to',
   title: 'What Manoj is open to',
   href: '/#contact',
-  section: '§08',
+  section: '08',
   text: `${contact.openTo} He is a third-year undergraduate, so internships are available now and full-time work from graduation. Both machine-learning systems roles and full-stack roles fit the work on this site.`,
 });
 
@@ -71,7 +71,7 @@ add({
   id: 'id-education',
   title: 'Education',
   href: '/#about',
-  section: '§06',
+  section: '06',
   text: `Manoj studies at Atria University in Bengaluru. He is a third-year undergraduate there, reading Digital Transformation with a minor in AI and ML. His CGPA is 8.1. He attended Sri Chaitanya for Class 12 and Maruthi Vidyalaya for Class 10. ${education
     .map((e) => e.institution)
     .join(', ')}.`,
@@ -81,7 +81,7 @@ add({
   id: 'id-achievement',
   title: 'Headline achievement',
   href: '/#recognition',
-  section: '§02',
+  section: '02',
   text: `DrugOS took first place in a college-level competition and was selected for the TiE global event. Manoj was the originator, architect and project lead for Team Cosmic, a team of four. ${proofStrip
     .map((p) => `${p.value} ${p.label}`)
     .join('; ')}.`,
@@ -91,7 +91,7 @@ add({
   id: 'id-bio',
   title: 'About Manoj, in his own words',
   href: '/#about',
-  section: '§06',
+  section: '06',
   text: about.paragraphs.join(' '),
 });
 
@@ -102,7 +102,7 @@ recognition.body.forEach((para, i) => {
     id: `rec-${i + 1}`,
     title: recognition.headline,
     href: '/#recognition',
-    section: '§02',
+    section: '02',
     text: para,
   });
 });
@@ -114,7 +114,7 @@ principles.forEach((p) => {
     id: `how-${p.n}`,
     title: `How Manoj works: ${p.title}`,
     href: '/#how-i-work',
-    section: '§04',
+    section: '04',
     text: `${p.title}. ${p.lede} ${p.body} Evidence: ${p.evidence}.`,
   });
 });
@@ -126,7 +126,7 @@ capabilities.forEach((c) => {
     id: `cap-${c.group.toLowerCase().replace(/\s+/g, '-')}`,
     title: `Skills: ${c.group}`,
     href: '/#capabilities',
-    section: '§05',
+    section: '05',
     text:
       c.group === 'Data'
         ? `Data and databases: ${c.skills.join(', ')}. These are the databases and data tools Manoj has used and stored data in. They are proven in ${c.proof}.`
@@ -138,7 +138,7 @@ add({
   id: 'cap-summary',
   title: 'Tech stack overview',
   href: '/#capabilities',
-  section: '§05',
+  section: '05',
   text: `Manoj's stack across all three systems: ${capabilities
     .map((c) => `${c.group} — ${c.skills.join(', ')}`)
     .join('; ')}.`,
@@ -156,7 +156,7 @@ for (const p of projects) {
     id: `${p.slug}-overview`,
     title: `${p.name} — what it is`,
     href,
-    section: '§03',
+    section: '03',
     text: `${p.fullName}. ${p.tagline} It is one of the three systems Manoj has shipped.`,
   });
 
@@ -164,7 +164,7 @@ for (const p of projects) {
     id: `${p.slug}-facts`,
     title: `${p.name} — role, stack and repository`,
     href,
-    section: '§03',
+    section: '03',
     text: `On ${p.name}, Manoj's role was ${p.role}, ${p.team}, in ${p.year}. The repository is ${p.repoLabel}. The stack is ${p.stack.join(', ')}. Its headline number is ${p.headline.value} — ${p.headline.label}.`,
   });
 
@@ -173,7 +173,7 @@ for (const p of projects) {
       id: `${p.slug}-abstract-${i + 1}`,
       title: `${p.name} — abstract`,
       href,
-      section: '§03',
+      section: '03',
       text: para,
     });
   });
@@ -183,7 +183,7 @@ for (const p of projects) {
       id: `${p.slug}-problem-${i + 1}`,
       title: `${p.name} — ${p.problem.heading}`,
       href: `${href}#problem`,
-      section: '§03',
+      section: '03',
       text: para,
     });
   });
@@ -193,7 +193,7 @@ for (const p of projects) {
       id: `${p.slug}-arch-${i + 1}`,
       title: `${p.name} — architecture`,
       href: `${href}#architecture`,
-      section: '§03',
+      section: '03',
       text: para,
     });
   });
@@ -203,7 +203,7 @@ for (const p of projects) {
       id: `${p.slug}-hard-${i + 1}`,
       title: `${p.name} — ${hp.title}`,
       href: `${href}#hard-problems`,
-      section: '§03',
+      section: '03',
       text: `${hp.title}. The problem: ${hp.problem} The decision: ${hp.decision} The result: ${hp.result}`,
     });
   });
@@ -212,7 +212,7 @@ for (const p of projects) {
     id: `${p.slug}-results`,
     title: `${p.name} — results`,
     href: `${href}#results`,
-    section: '§03',
+    section: '03',
     text: `These are the ${p.name} results, each one with the run or file it was read from. ${p.results.rows
       .map(
         (r) =>
@@ -226,7 +226,7 @@ for (const p of projects) {
       id: `${p.slug}-results-note`,
       title: `${p.name} — reading the results honestly`,
       href: `${href}#results`,
-      section: '§03',
+      section: '03',
       text: p.results.note,
     });
   }
@@ -235,7 +235,7 @@ for (const p of projects) {
     id: `${p.slug}-limitations`,
     title: `${p.name} — limitations`,
     href: `${href}#limitations`,
-    section: '§03',
+    section: '03',
     text: `These are the limitations of ${p.name}, and what does not work in it, stated by Manoj rather than found by a reviewer. ${p.limitations.join(' ')}`,
   });
 
@@ -243,7 +243,7 @@ for (const p of projects) {
     id: `${p.slug}-next`,
     title: `${p.name} — what I would do next`,
     href: `${href}#next`,
-    section: '§03',
+    section: '03',
     text: `These are the three things Manoj would do next on ${p.name}. ${p.next.join(' ')}`,
   });
 }
@@ -254,7 +254,7 @@ add({
   id: 'site-colophon',
   title: 'How this site is built',
   href: '/colophon',
-  section: '§09',
+  section: '09',
   text: `This portfolio is built with ${colophon.stack
     .map(([k, v]) => `${k}: ${v}`)
     .join(' ')} Typefaces: ${colophon.typefaces
@@ -266,7 +266,7 @@ add({
   id: 'site-privacy',
   title: 'What this site stores about you',
   href: '/colophon#privacy',
-  section: '§09',
+  section: '09',
   text: `This is everything the site stores about a visitor, and for how long. ${colophon.privacy.join(' ')}`,
 });
 
@@ -274,7 +274,7 @@ add({
   id: 'site-code',
   title: 'Where the code is',
   href: identity.github,
-  section: '§03',
+  section: '03',
   // Deliberately does not list the project names. This chunk answers "where
   // is the code", and naming all three here made it outrank every project's
   // own chunk whenever someone asked about one of them by name.
@@ -285,7 +285,7 @@ add({
   id: 'site-resume',
   title: 'Résumé',
   href: '/resume',
-  section: '§10',
+  section: '10',
   text: `Manoj's résumé is available as a readable page at /resume and as a one-page PDF download. It is generated from the same content file that produces this site, so the two cannot disagree. Updated ${site.updated}.`,
 });
 

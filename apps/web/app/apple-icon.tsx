@@ -29,7 +29,7 @@ export default async function AppleIcon() {
           color: '#002FA7',
         }}
       >
-        §
+        M
       </div>
     ),
     {

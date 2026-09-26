@@ -263,9 +263,6 @@ export function SpecimenRail() {
       <div className="pointer-events-none absolute bottom-[12vh] left-8 right-12">
         <NodeLabel label={label} />
         <p className="caption mt-3 max-w-[34ch] opacity-70">
-          <span className="fig-id mono mr-2 text-[var(--color-pigment)]">
-            {state === 'graph' ? 'Fig. 1.3' : state === 'tail' ? 'Fig. 2.3' : 'Fig. 3.3'}
-          </span>
           {state === 'graph'
             ? 'Illustrative repurposing path, in pigment. Not a model prediction.'
             : state === 'tail'

@@ -18,7 +18,6 @@ import { ArrowNE, ArrowSwap } from '@/components/Icons';
 import { DrugOSDiagram } from '@/components/diagrams/DrugOSDiagram';
 import { TailGenDiagram } from '@/components/diagrams/TailGenDiagram';
 import { AtmosViewDiagram } from '@/components/diagrams/AtmosViewDiagram';
-import { CaseStudyToc } from '@/components/motion/CaseStudyToc';
 import { DrawOnView } from '@/components/motion/DrawOnView';
 
 export function generateStaticParams() {
@@ -96,29 +95,13 @@ export default async function CaseStudy({
   const Diagram = DIAGRAMS[p.slug];
   const next = nextProject(p.slug);
 
-  /* The TOC rail (Motion PRD 10.6): the study's sections, inked as the
-     reader passes them, gliding under Lenis. */
-  const TOC = [
-    { id: 'abstract', label: 'Abstract' },
-    { id: 'problem', label: 'Problem' },
-    { id: 'architecture', label: 'Architecture' },
-    { id: 'hard-problems', label: 'Hard problems' },
-    { id: 'results', label: 'Results' },
-    { id: 'limitations', label: 'Limitations' },
-    { id: 'next', label: 'What’s next' },
-  ] as const;
-
   return (
     <article>
-      <CaseStudyToc items={TOC} />
       {/* ── Header plate ─────────────────────────────────────────────── */}
       <header className="shell pt-[calc(var(--masthead-h)+3rem)] lg:pt-[calc(var(--masthead-h)+5rem)]">
         <div className="grid12 items-start gap-y-12">
           <div className="col-span-12 lg:col-span-6">
             <div className="mb-7 flex items-baseline gap-4">
-              <span className="mono text-[var(--step-micro)] tracking-[0.06em] text-[var(--color-pigment)]">
-                §03.{p.index}
-              </span>
               <Link href="/#work" className="micro ink-link">
                 Selected work
               </Link>
@@ -176,15 +159,6 @@ export default async function CaseStudy({
             <div className="case-header-plate relative aspect-square w-full border border-[var(--border-subtle)] bg-[var(--bg-raised)]">
               <SpecimenInline state={p.specimen} className="absolute inset-0" />
             </div>
-            <FigureCaption
-              id={p.specimen === 'graph' ? 'Fig. 1.3' : p.specimen === 'tail' ? 'Fig. 2.3' : 'Fig. 3.3'}
-            >
-              {p.specimen === 'graph'
-                ? 'The specimen in its first state — the DrugOS knowledge graph. The pigment route is illustrative, not a model prediction.'
-                : p.specimen === 'tail'
-                  ? 'The specimen in its second state — a histogram of daily returns. The pigment nodes are the left tail; the dashed curve is the Gaussian.'
-                  : 'The specimen in its third state — four provider layers over India, offset from one another by their disagreement.'}
-            </FigureCaption>
           </figure>
         </div>
       </header>

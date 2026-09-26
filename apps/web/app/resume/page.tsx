@@ -33,9 +33,6 @@ export default function Resume() {
           {/* Masthead of the document itself */}
           <header className="mb-10">
             <div className="mb-6 flex items-baseline gap-4">
-              <span className="mono text-[var(--step-micro)] tracking-[0.06em] text-[var(--color-pigment)]">
-                §10
-              </span>
               <span className="micro">Résumé</span>
             </div>
 
@@ -53,9 +50,7 @@ export default function Resume() {
               {resumeHeader.title}
             </p>
 
-            <Rule tone="pigment" className="my-6" />
-
-            <ul className="flex flex-wrap gap-x-5 gap-y-2 p-0 m-0 list-none">
+            <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 p-0 m-0 list-none">
               {resumeHeader.contact.map((c) => (
                 <li key={c} className="mono text-[0.8rem] text-[var(--color-graphite)]">
                   {c}

@@ -21,13 +21,13 @@ const SECTION_LABELS: Record<string, string> = {
 };
 
 /** The overlay links: the site's sections, plus the two cross-cutting pages.
- *  The § numbers are the page's own section numbers, not list indices. */
+ *  The numbers are the page's own section numbers, not list indices. */
 const MENU_LINKS = [
-  { label: 'Work', href: '/#work', mark: '§03' },
-  { label: 'How I work', href: '/#how-i-work', mark: '§04' },
-  { label: 'About', href: '/#about', mark: '§06' },
-  { label: 'Ask Manoj', href: '/#ask', mark: '§07', ask: true },
-  { label: 'Contact', href: '/#contact', mark: '§08' },
+  { label: 'Work', href: '/#work', mark: '03' },
+  { label: 'How I work', href: '/#how-i-work', mark: '04' },
+  { label: 'About', href: '/#about', mark: '06' },
+  { label: 'Ask Manoj', href: '/#ask', mark: '07', ask: true },
+  { label: 'Contact', href: '/#contact', mark: '08' },
   { label: 'Résumé', href: '/resume', mark: 'PDF' },
 ];
 
@@ -169,7 +169,7 @@ export function Masthead() {
               className="mono hidden text-[var(--step-micro)] text-[var(--action)] sm:inline tabular"
               aria-hidden="true"
             >
-              {active && !menuOpen ? `§${active}` : ''}
+              {active && !menuOpen ? `${active}` : ''}
             </span>
             <span className="sr-only" aria-live="polite">
               {active && SECTION_LABELS[active]
@@ -287,7 +287,7 @@ export function Masthead() {
                         </span>
                       </span>
                       <span className="mono text-[var(--step-micro)] text-[var(--text-muted)]">
-                        §07
+                        07
                       </span>
                     </button>
                   ) : (

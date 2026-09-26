@@ -83,7 +83,7 @@ export async function renderOg({
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <span style={{ fontFamily: 'JBMono', fontSize: 20, color: PIGMENT }}>
-              §{mark}
+              {mark}
             </span>
             <span
               style={{

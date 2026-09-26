@@ -2,7 +2,6 @@ import { proofStrip, standfirst } from '@manoj/content/profile';
 import { SectionMark } from '@/components/Section';
 import { ResumeLink } from '@/components/TrackedLinks';
 import { SpecimenInline } from '@/components/specimen/Specimen';
-import { FigureCaption } from '@/components/Primitives';
 import { AvailabilityLine } from '@/components/Availability';
 import { Counter } from '@/components/motion/Counter';
 
@@ -87,11 +86,6 @@ export function Hero() {
             <div className="relative aspect-square w-full">
               <SpecimenInline state="graph" className="absolute inset-0" />
             </div>
-            <FigureCaption id="Fig. 1.3">
-              The DrugOS knowledge graph as a specimen. The blue path is an
-              illustrative repurposing route — drug to protein to pathway to
-              disease. Not a model prediction.
-            </FigureCaption>
           </figure>
         </div>
 

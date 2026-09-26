@@ -418,8 +418,9 @@ body::after {
   }
 
   /* ═══════════════════════════════════════════════════════════════════════
-     THE SECTION MARK (§)
-     Borrowed from the DrugOS specification, whose numbered sections are cited
+     THE SECTION MARK
+     A plain two-digit section number — the numbered-section convention
+     borrowed from the DrugOS specification, whose sections are cited
      547 times in that codebase. It is the device no template has.
      ═══════════════════════════════════════════════════════════════════════ */
 
@@ -447,10 +448,6 @@ body::after {
 
   .section-mark[data-active='true'] {
     color: var(--action);
-  }
-
-  .section-mark .mark-glyph {
-    font-size: 1.15em;
   }
 
   /* On wide screens the mark hangs in the left margin, outside the text. */
@@ -1249,41 +1246,11 @@ html[data-specimen-dragging='true'] .specimen-drag {
 }
 
 /* ── 15.3 — Case-study TOC rail ──────────────────────────────────────────
-   A two-thousand-word study deserves the navigation dignity a printed
-   monograph gives its chapters. The current section is inked by JS. */
+   Removed at the client's request: on common laptop widths it collided
+   with the reading column. Kept as a no-op so stale class names can never
+   resurrect it. */
 .toc-rail {
-  position: fixed;
-  left: var(--grid-margin);
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 30;
-}
-
-.toc-rail ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.toc-rail a {
-  font-family: var(--font-mono);
-  font-size: var(--step-micro);
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: color var(--dur-quick) var(--ease-settle);
-}
-
-.toc-rail a[aria-current='true'] {
-  color: var(--ink-1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .toc-rail a {
-    transition: none;
-  }
+  display: none;
 }
 
 /* ── 10.2 — Lenis, the library's own contract ────────────────────────
