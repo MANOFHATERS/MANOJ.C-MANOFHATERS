@@ -1,0 +1,27 @@
+{
+  "name": "@manoj/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "npm run kb && wrangler deploy",
+    "kb": "tsx scripts/build-kb.ts",
+    "migrate": "tsx scripts/migrate.ts",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.scripts.json",
+    "eval": "tsx scripts/evaluate.ts"
+  },
+  "dependencies": {
+    "@manoj/content": "*",
+    "@neondatabase/serverless": "^1.0.2",
+    "hono": "^4.13.9",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250927.0",
+    "@types/node": "^22.15.3",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.42.2"
+  }
+}

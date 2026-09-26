@@ -1,0 +1,45 @@
+name = "manoj-api"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Workers AI: the guide's model and the embedding model both run here.
+[ai]
+binding = "AI"
+
+[observability]
+enabled = true
+
+[vars]
+# Only these origins may call the API. Never "*".
+ALLOWED_ORIGIN = "https://manojc.vercel.app"
+# Vercel preview deployments for this project, matched as a suffix.
+PREVIEW_ORIGIN_SUFFIX = ".vercel.app"
+PREVIEW_ORIGIN_PREFIX = "https://manoj-portfolio-"
+
+# The models, by id, so a rename is a config change and not a code change.
+PRIMARY_MODEL = "@cf/google/gemma-4-26b-a4b-it"
+FALLBACK_MODEL = "@cf/qwen/qwen3-30b-a3b-fp8"
+EMBEDDING_MODEL = "@cf/baai/bge-m3"
+
+# Free allocation is 10,000 Neurons a day. At 70% the guide switches to the
+# cheaper model; at 90% it rests and serves the static FAQ.
+DAILY_NEURON_BUDGET = "10000"
+BUDGET_FALLBACK_PCT = "70"
+BUDGET_REST_PCT = "90"
+
+# Below this cosine score the best chunk is a coincidence, and a coincidence
+# is where invention starts. Tuned on the 60-question evaluation set.
+RELEVANCE_FLOOR = "0.35"
+# The same idea for the BM25 fallback, which scores on a different scale.
+LEXICAL_FLOOR = "0.16"
+
+# Secrets, set with `wrangler secret put`:
+#   DATABASE_URL        — Neon connection string, insert/select/delete only
+#   TURNSTILE_SECRET    — Cloudflare Turnstile secret key
+#   VISITOR_HASH_SALT   — rotated daily by the cron trigger below
+
+[triggers]
+# 00:10 UTC — just after the Workers AI daily reset. Rotates the visitor-hash
+# salt and deletes transcripts older than 90 days.
+crons = ["10 0 * * *"]

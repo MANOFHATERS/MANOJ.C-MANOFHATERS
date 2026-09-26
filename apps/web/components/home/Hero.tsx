@@ -1,0 +1,111 @@
+import { proofStrip, standfirst } from '@manoj/content/profile';
+import { SectionMark } from '@/components/Section';
+import { ResumeLink } from '@/components/TrackedLinks';
+import { SpecimenInline } from '@/components/specimen/Specimen';
+import { FigureCaption } from '@/components/Primitives';
+
+/**
+ * §01.
+ *
+ * The thesis is in the HTML from the first byte and is the LCP element. The
+ * clip-mask reveal moves a wrapper, never the text's own opacity, so a
+ * visitor on a slow connection reads the sentence before anything animates
+ * and a visitor with JavaScript off reads it at full opacity forever.
+ */
+
+const THESIS_LINES = [
+  'I build systems',
+  'that tell the truth,',
+  'especially when the truth',
+  'is inconvenient.',
+];
+
+export function Hero() {
+  return (
+    <section
+      id="top"
+      data-section="01"
+      data-specimen="graph"
+      aria-labelledby="hero-heading"
+      className="section pt-[calc(var(--masthead-h)+3.5rem)] lg:pt-[calc(var(--masthead-h)+6rem)]"
+    >
+      <div className="shell">
+        <div className="grid12">
+          <div className="col-span-12 lg:col-span-8">
+            <div className="mb-8 flex items-baseline gap-4">
+              <SectionMark mark="01" />
+              <span className="micro">Bengaluru, India</span>
+            </div>
+
+            <h1
+              id="hero-heading"
+              className="font-[family-name:var(--font-serif)] tracking-[-0.025em]"
+              style={{
+                // Deliberately below the display step: the thesis has to hold
+                // its own measure in eight columns, and a size that overflows
+                // the column is a size that is too big, whatever the scale says.
+                fontSize: 'clamp(2.6rem, 1.1rem + 5.4vw, 5.75rem)',
+                lineHeight: 0.98,
+                fontWeight: 350,
+              }}
+            >
+              {THESIS_LINES.map((line, i) => (
+                <span
+                  key={line}
+                  className="type-set-line"
+                  style={{ ['--line-index' as string]: i }}
+                >
+                  <span>{line}</span>
+                </span>
+              ))}
+            </h1>
+
+            <p className="lede enter mt-10 max-w-[46ch] font-[family-name:var(--font-sans)]">
+              {standfirst}
+            </p>
+
+            <div className="enter mt-10 flex flex-wrap items-center gap-3">
+              <a href="#work" className="btn btn--pigment">
+                Read the work
+              </a>
+              <ResumeLink className="btn">Download résumé</ResumeLink>
+            </div>
+          </div>
+        </div>
+
+        {/* On phones the specimen sits under the text, at a fixed aspect so
+            nothing shifts when it loads. On desktop the rail takes over. */}
+        <div className="mt-14 lg:hidden">
+          <figure>
+            <div className="relative aspect-square w-full">
+              <SpecimenInline state="graph" className="absolute inset-0" />
+            </div>
+            <FigureCaption id="Fig. 1.3">
+              The DrugOS knowledge graph as a specimen. The vermilion path is an
+              illustrative repurposing route — drug to protein to pathway to
+              disease. Not a model prediction.
+            </FigureCaption>
+          </figure>
+        </div>
+
+        {/* The proof strip. Four facts, mono, hairline-separated. */}
+        <div className="mt-16 lg:mt-24 lg:max-w-[58%]">
+          <hr className="rule rule--draw" aria-hidden="true" />
+          <dl className="enter-stagger grid grid-cols-2 gap-x-6 sm:grid-cols-4">
+            {proofStrip.map((fact) => (
+              <div
+                key={fact.label}
+                className="border-b border-[var(--color-rule)] py-5 sm:border-b-0 sm:border-r sm:pr-5 sm:last:border-r-0"
+              >
+                <dt className="micro mb-1.5">{fact.label}</dt>
+                <dd className="mono m-0 text-[1.35rem] leading-none tracking-[-0.01em] text-[var(--color-ink)]">
+                  {fact.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
+  );
+}

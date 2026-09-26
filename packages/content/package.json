@@ -1,0 +1,18 @@
+{
+  "name": "@manoj/content",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./profile": "./profile.ts",
+    "./projects": "./projects.ts",
+    "./resume": "./resume.ts",
+    "./api-types": "./api-types.ts",
+    "./knowledge": "./knowledge.ts",
+    "./scope": "./scope.ts",
+    "./search": "./search.ts"
+  }
+}

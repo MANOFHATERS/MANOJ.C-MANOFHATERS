@@ -1,0 +1,26 @@
+{
+  "name": "manoj-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Manoj C — portfolio. Scientific atelier, light-only, ₹0/month.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=@manoj/web",
+    "build": "npm run build --workspace=@manoj/web",
+    "start": "npm run start --workspace=@manoj/web",
+    "lint": "npm run lint --workspace=@manoj/web",
+    "typecheck": "npm run typecheck --workspace=@manoj/web",
+    "resume": "npm run resume --workspace=@manoj/web",
+    "kb": "npm run kb --workspace=@manoj/api",
+    "api:dev": "npm run dev --workspace=@manoj/api",
+    "api:deploy": "npm run deploy --workspace=@manoj/api",
+    "api:eval": "npm run eval --workspace=@manoj/api",
+    "api:migrate": "npm run migrate --workspace=@manoj/api"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

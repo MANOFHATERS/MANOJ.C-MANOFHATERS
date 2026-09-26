@@ -1,0 +1,35 @@
+{
+  "name": "@manoj/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "tsx scripts/build-resume.tsx && next build",
+    "build:site": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "resume": "tsx scripts/build-resume.tsx"
+  },
+  "dependencies": {
+    "@manoj/content": "*",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.8.1",
+    "next": "16.3.6",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@react-pdf/renderer": "^4.9.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "tsx": "^4.20.6",
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/three": "^0.186.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
+  }
+}

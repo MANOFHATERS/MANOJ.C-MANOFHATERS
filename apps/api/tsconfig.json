@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["@cloudflare/workers-types"],
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "paths": {
+      "@manoj/content": ["../../packages/content/index.ts"],
+      "@manoj/content/*": ["../../packages/content/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "../../packages/content/**/*.ts"],
+  "exclude": ["node_modules"]
+}

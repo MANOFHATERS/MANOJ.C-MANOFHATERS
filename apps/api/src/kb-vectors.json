@@ -1,0 +1,6 @@
+{
+  "model": "@cf/baai/bge-m3",
+  "built": null,
+  "note": "Placeholder. Run `npm run kb --workspace=@manoj/api` with CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN set to fill this with real embeddings. While `vectors` is empty the Worker retrieves with BM25 instead, which is the same search the browser fallback runs.",
+  "vectors": []
+}

@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Typecheck, build, evaluate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck both workspaces
+        run: |
+          npm run typecheck
+          npm run typecheck --workspace=@manoj/api
+
+      # The résumé is generated first, so a change to the content that pushes
+      # it onto a second page fails here rather than shipping.
+      - name: Build the site and the résumé
+        run: npm run build
+
+      - name: Résumé is one page and has selectable text
+        run: |
+          node -e "
+            const fs = require('node:fs');
+            const path = 'apps/web/public/Manoj-C-Resume.pdf';
+            const buf = fs.readFileSync(path).toString('latin1');
+            const pages = (buf.match(/\/Type\s*\/Page[^s]/g) || []).length;
+            if (pages !== 1) { console.error('résumé is ' + pages + ' pages'); process.exit(1); }
+            if (!/\/Font/.test(buf)) { console.error('no embedded font — text may not be selectable'); process.exit(1); }
+            console.log('résumé: 1 page, fonts embedded');
+          "
+
+      # The guide's refusal rules are checked on every pull request. With no
+      # Worker reachable this evaluates the offline fallback, which runs the
+      # same scope rules — the degraded path is not a weaker path.
+      - name: Evaluate the guide
+        run: npm run api:eval
+
+      - name: No raw hex colours in components
+        run: |
+          if grep -rInE "#[0-9a-fA-F]{6}\b" apps/web/components apps/web/app \
+               --include="*.tsx" --include="*.ts" \
+               | grep -v "specimen-still-svg\|SpecimenStill\|SpecimenCanvas\|/og.tsx\|apple-icon\|icon.svg"; then
+            echo "Raw hex found outside the places allowed to hold it."
+            echo "Colours belong in globals.css as tokens."
+            exit 1
+          fi
+
+  links:
+    name: External links resolve
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check every external link in the content
+        run: |
+          set -e
+          for url in \
+            "https://github.com/MANOFHATERS" \
+            "https://www.linkedin.com/in/manoj-c-043264414" \
+            "https://github.com/MANOFHATERS/autonomous-drug-repurposing" \
+            "https://github.com/MANOFHATERS/tailgen" \
+            "https://github.com/MANOFHATERS/atmosview-weather" \
+            "https://fonts.google.com/specimen/Newsreader" \
+            "https://fonts.google.com/specimen/Schibsted+Grotesk" \
+            "https://fonts.google.com/specimen/IBM+Plex+Mono"
+          do
+            code=$(curl -s -o /dev/null -w "%{http_code}" -L --max-time 20 \
+                   -A "Mozilla/5.0 (compatible; manoj-portfolio-linkcheck)" "$url" || echo 000)
+            # LinkedIn answers 999 to anything that is not a browser; that is
+            # not a broken link, so it is allowed through explicitly.
+            case "$code" in
+              2*|3*|999) echo "ok   $code  $url" ;;
+              *)         echo "FAIL $code  $url"; exit 1 ;;
+            esac
+          done
