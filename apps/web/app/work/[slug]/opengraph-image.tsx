@@ -23,7 +23,6 @@ export default async function Image({ params }: { params: Promise<{ slug: string
       [p.stack.length.toString(), 'technologies'],
       ['Limits', 'stated in full'],
     ],
-    specimen: p.specimen,
     titleSize: 92,
   });
 }

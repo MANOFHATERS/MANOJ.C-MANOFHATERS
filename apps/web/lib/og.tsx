@@ -1,8 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { ImageResponse } from 'next/og';
-import { specimenDataUri } from './specimen-still-svg';
-import type { SpecimenStateName } from './specimen-geometry';
 
 /**
  * Open Graph images, in the same ink-on-paper as the site.
@@ -48,7 +46,6 @@ export async function renderOg({
   title,
   standfirst,
   facts,
-  specimen,
   titleSize = 76,
 }: {
   mark: string;
@@ -56,7 +53,6 @@ export async function renderOg({
   title: string;
   standfirst?: string;
   facts?: ReadonlyArray<readonly [string, string]>;
-  specimen: SpecimenStateName;
   titleSize?: number;
 }) {
   return new ImageResponse(
@@ -71,14 +67,14 @@ export async function renderOg({
           position: 'relative',
         }}
       >
-        {/* Left column: the words */}
+        {/* The words: full measure, generous margins */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            padding: '64px 0 56px 72px',
-            width: 720,
+            padding: '64px 72px 56px 72px',
+            width: '100%',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -159,32 +155,6 @@ export async function renderOg({
             </div>
           </div>
         </div>
-
-        {/* Right: the specimen */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 480,
-            height: '100%',
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={specimenDataUri(specimen)} width={420} height={420} alt="" />
-        </div>
-
-        {/* A hairline down the gutter, the way a plate is separated from the text */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 720,
-            top: 56,
-            bottom: 56,
-            width: 1,
-            backgroundColor: RULE,
-          }}
-        />
       </div>
     ),
     { ...OG_SIZE, fonts: await fonts() },

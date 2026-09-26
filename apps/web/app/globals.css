@@ -50,7 +50,7 @@
   --dur-moderate: 320ms; /* card lifts, menu reveals, confirmations */
   --dur-slow: 480ms; /* section entrances, figure settles */
   --dur-scenic: 800ms; /* hero line rises, pinned beats, rule draws */
-  --dur-cinematic: 1200ms; /* route veils, specimen morphs */
+  --dur-cinematic: 1200ms; /* route veils, slow choreography */
 
   /* Easings — productive register (Carbon-calibrated) */
   --ease-standard: cubic-bezier(0.2, 0, 0.38, 0.9); /* state changes */
@@ -1168,9 +1168,9 @@ body::after {
 }
 
 /* ── 15.4 / 404 — The constellation ───────────────────────────────────────
-   The "404" numeral set in the specimen's node language: dots on a grid,
-   drawing in on entry. Pigment marks a few positions — meaning, not
-   decoration. The component builds the grid; CSS draws it. */
+   The "404" numeral set in a node language: dots on a grid, drawing in
+   on entry. Pigment marks a few positions — meaning, not decoration.
+   The component builds the grid; CSS draws it. */
 .constellation-dot {
   transform: scale(0);
   opacity: 0;
@@ -1186,54 +1186,6 @@ body::after {
 @keyframes constellation-in {
   from { transform: scale(0); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
-}
-
-/* ── 12.2 — Specimen loader constellation + canvas cross-fade ───────────
-   Edges draw over 800ms on the draw curve while WebGL warms, then the
-   live canvas cross-fades in at the moderate duration. The waiting state
-   previews the thing waited for — the only honest form of loader. */
-.specimen-loader {
-  display: block;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .specimen-loader path,
-  .specimen-loader line,
-  .specimen-loader polyline {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: loader-draw var(--dur-scenic) var(--ease-draw) both;
-  }
-
-  /* The live canvas arrives over the still at the moderate duration. */
-  .specimen-enter {
-    animation: specimen-enter var(--dur-moderate) var(--ease-settle) both;
-  }
-}
-
-@keyframes loader-draw {
-  from { stroke-dashoffset: 1; }
-  to { stroke-dashoffset: 0; }
-}
-
-@keyframes specimen-enter {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ── 9.4 — Specimen drag affordance ──────────────────────────────────────
-   The canvas is a touch surface: grab over the object, grabbing while
-   held. Vertical pan stays with the page on mobile inline specimens
-   (pan-y), so a drag never becomes a scroll trap; once a drag begins,
-   the surface owns the gesture. */
-.specimen-drag {
-  touch-action: pan-y;
-  cursor: grab;
-}
-
-html[data-specimen-dragging='true'] .specimen-drag {
-  cursor: grabbing;
-  touch-action: none;
 }
 
 /* ── 10.7 — Hard problems: alternating emphasis ──────────────────────────
@@ -1282,7 +1234,7 @@ html.lenis body {
 /* ═══════════════════════════════════════════════════════════════════════
    REDUCED MOTION
    All entrance and scroll-linked motion removed. Page transitions instant.
-   The specimen switches to stills. Hover colour stays — it carries meaning.
+   Hover colour stays — it carries meaning.
    ═══════════════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {

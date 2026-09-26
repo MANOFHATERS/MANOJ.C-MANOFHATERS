@@ -15,7 +15,6 @@ export default async function Image() {
       ['8.1', 'CGPA'],
       ['PDF', 'one page, ATS-readable'],
     ],
-    specimen: 'graph',
     titleSize: 84,
   });
 }

@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { projects } from '@manoj/content/projects';
 import { SectionMark, Rule } from '@/components/Section';
-import { SpecimenInline } from '@/components/specimen/Specimen';
 import { ArrowSwap } from '@/components/Icons';
 
 /**
@@ -9,9 +8,6 @@ import { ArrowSwap } from '@/components/Icons';
  *
  * An index, not a card grid. Each project is a row in a printed contents
  * page: number, title, role, year, the line that explains it, and one metric.
- * Scrolling through the three rows is what drives the specimen through its
- * three states on desktop — the object and the index are reading the same
- * scroll position.
  */
 export function SelectedWork() {
   return (
@@ -38,13 +34,11 @@ export function SelectedWork() {
           {projects.map((p, i) => (
             <li
               key={p.slug}
-              data-specimen={p.specimen}
               className="border-t border-[var(--color-rule)] first:border-t-0"
               style={{ ['--i' as string]: i }}
             >
               <Link
                 href={`/work/${p.slug}`}
-                data-specimen-link={p.specimen}
                 data-cursor="view"
                 className="work-row group block py-10 lg:py-16 transition-colors duration-[var(--dur-base)]"
               >
@@ -80,19 +74,6 @@ export function SelectedWork() {
                       <span className="micro normal-case tracking-[0.04em]">
                         {p.headline.label}
                       </span>
-                    </div>
-                  </div>
-
-                  {/* On phones each row carries its own still of the state the
-                      specimen would take. On desktop the rail does it live.
-                      The plate is the T2 source when it is visible. */}
-                  <div className="col-span-12 mt-8 lg:hidden" data-row-plate>
-                    <div className="relative aspect-[4/3] w-full border border-[var(--color-rule)] bg-[var(--color-paper-raised)]">
-                      <SpecimenInline
-                        state={p.specimen}
-                        ssrStill={false}
-                        className="absolute inset-0"
-                      />
                     </div>
                   </div>
 

@@ -16,7 +16,6 @@ export function Recognition() {
     <section
       id="recognition"
       data-section="02"
-      data-specimen="graph"
       aria-labelledby="recognition-heading"
       className="section"
     >

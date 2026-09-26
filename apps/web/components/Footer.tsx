@@ -71,7 +71,6 @@ export function Footer() {
                 { label: 'TailGen', href: '/work/tailgen' },
                 { label: 'AtmosView', href: '/work/atmosview' },
                 { label: 'Résumé', href: '/resume' },
-                { label: 'Colophon', href: '/colophon' },
               ].map((l) => (
                 <li key={l.href}>
                   <Link

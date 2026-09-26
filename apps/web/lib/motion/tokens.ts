@@ -27,7 +27,7 @@ export const DUR = {
   slow: 480,
   /** Hero line rises, pinned beats, rule draws. */
   scenic: 800,
-  /** Route veils, specimen morphs. */
+  /** Route veils, slow choreography. */
   cinematic: 1200,
 } as const;
 
@@ -94,8 +94,6 @@ export const TRANSITION = {
   veilLift: 260,
   /** T1 total to interactive. */
   veilTotal: 540,
-  /** T2 shared specimen morph. */
-  specimenMorph: 800,
 } as const;
 
 /* ── Latency budgets — PRD Table 9.1 (NN/g) ─────────────────────────── */

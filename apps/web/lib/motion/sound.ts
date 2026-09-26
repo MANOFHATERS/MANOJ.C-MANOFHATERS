@@ -229,18 +229,3 @@ export function playVoice(name: VoiceName): void {
     /* A failed voice is silence, never an error. */
   }
 }
-
-/**
- * The settle voice plays at most once per specimen state change and
- * never during the morph itself — a sound that plays continuously is
- * a sound that gets muted.
- */
-let settleTimer: ReturnType<typeof setTimeout> | null = null;
-export function playSettleAfter(delayMs = 260): void {
-  if (!enabled) return;
-  if (settleTimer) clearTimeout(settleTimer);
-  settleTimer = setTimeout(() => {
-    playVoice('settle');
-    settleTimer = null;
-  }, delayMs);
-}

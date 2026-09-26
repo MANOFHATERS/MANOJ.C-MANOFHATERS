@@ -66,9 +66,9 @@ export function getLenis() {
 }
 
 /**
- * The specimen rail's zone evaluation reads real scroll position; under
- * Lenis that is window.scrollY, which Lenis keeps synced. This helper
- * exists so future code has one place to ask "where are we really?".
+ * Under Lenis the effective scroll position is window.scrollY, which Lenis
+ * keeps synced. This helper exists so future code has one place to ask
+ * "where are we really?".
  */
 export function scrollY(): number {
   return typeof window === 'undefined' ? 0 : window.scrollY;

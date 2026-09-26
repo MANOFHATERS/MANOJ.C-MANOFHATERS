@@ -13,7 +13,6 @@ import {
   StackChips,
 } from '@/components/Primitives';
 import { AskButton, RepoLink } from '@/components/TrackedLinks';
-import { SpecimenInline } from '@/components/specimen/Specimen';
 import { ArrowNE, ArrowSwap } from '@/components/Icons';
 import { DrugOSDiagram } from '@/components/diagrams/DrugOSDiagram';
 import { TailGenDiagram } from '@/components/diagrams/TailGenDiagram';
@@ -100,7 +99,7 @@ export default async function CaseStudy({
       {/* ── Header plate ─────────────────────────────────────────────── */}
       <header className="shell pt-[calc(var(--masthead-h)+3rem)] lg:pt-[calc(var(--masthead-h)+5rem)]">
         <div className="grid12 items-start gap-y-12">
-          <div className="col-span-12 lg:col-span-6">
+          <div className="col-span-12 lg:col-span-8">
             <div className="mb-7 flex items-baseline gap-4">
               <Link href="/#work" className="micro ink-link">
                 Selected work
@@ -152,14 +151,6 @@ export default async function CaseStudy({
               </AskButton>
             </div>
           </div>
-
-          {/* case-header-plate is the T2 destination: the morph target
-              for the shared-specimen transition from the work index. */}
-          <figure className="col-span-12 lg:col-start-8 lg:col-span-5">
-            <div className="case-header-plate relative aspect-square w-full border border-[var(--border-subtle)] bg-[var(--bg-raised)]">
-              <SpecimenInline state={p.specimen} className="absolute inset-0" />
-            </div>
-          </figure>
         </div>
       </header>
 

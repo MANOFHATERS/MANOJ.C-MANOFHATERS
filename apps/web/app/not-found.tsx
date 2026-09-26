@@ -8,15 +8,13 @@ import { AskButton } from '@/components/TrackedLinks';
  * The joke is the whole site's argument: when a system does not know, it
  * refuses rather than guesses. A 404 is that rule applied to a URL.
  *
- * The one flourish (Motion PRD 15.4): the "404" numeral set in the
- * specimen's node constellation — dots on a grid, drawing in on entry,
- * a few positions in pigment. The site's argument, rendered even in
- * its refusal to guess.
+ * The one flourish (Motion PRD 15.4): the "404" numeral set in a node
+ * constellation — dots on a grid, drawing in on entry, a few positions in
+ * pigment. The site's argument, rendered even in its refusal to guess.
  */
 
 /* 5×7 dot-matrix glyphs. Pigment marks a few positions per digit —
-   meaning, not decoration: the positions the specimen's hero path
-   would occupy. */
+   meaning, not decoration. */
 const GLYPHS: Record<'4' | '0', boolean[][]> = {
   '4': [
     [false, false, false, true, false],

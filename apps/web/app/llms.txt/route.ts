@@ -63,7 +63,6 @@ team of four.
 - ${site.url}/ — home
 ${projects.map((p) => `- ${site.url}/work/${p.slug} — ${p.name} case study`).join('\n')}
 - ${site.url}/resume — résumé, with a one-page PDF
-- ${site.url}/colophon — how the site is built, and what it stores
 
 ## Accuracy note
 

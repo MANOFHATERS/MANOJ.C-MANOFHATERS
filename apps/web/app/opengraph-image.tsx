@@ -15,7 +15,6 @@ export default async function Image() {
       ['Selected', 'TiE global event'],
       ['8.1', 'CGPA'],
     ],
-    specimen: 'graph',
     titleSize: 58,
   });
 }

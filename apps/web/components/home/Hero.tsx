@@ -1,7 +1,6 @@
 import { proofStrip, standfirst } from '@manoj/content/profile';
 import { SectionMark } from '@/components/Section';
 import { ResumeLink } from '@/components/TrackedLinks';
-import { SpecimenInline } from '@/components/specimen/Specimen';
 import { AvailabilityLine } from '@/components/Availability';
 import { Counter } from '@/components/motion/Counter';
 
@@ -26,7 +25,6 @@ export function Hero() {
     <section
       id="top"
       data-section="01"
-      data-specimen="graph"
       aria-labelledby="hero-heading"
       className="section pt-[calc(var(--masthead-h)+3.5rem)] lg:pt-[calc(var(--masthead-h)+6rem)]"
     >
@@ -77,16 +75,6 @@ export function Hero() {
               </ResumeLink>
             </div>
           </div>
-        </div>
-
-        {/* On phones the specimen sits under the text, at a fixed aspect so
-            nothing shifts when it loads. On desktop the rail takes over. */}
-        <div className="mt-14 lg:hidden">
-          <figure>
-            <div className="relative aspect-square w-full">
-              <SpecimenInline state="graph" className="absolute inset-0" />
-            </div>
-          </figure>
         </div>
 
         {/* The proof strip. Four facts, mono, hairline-separated. It pins

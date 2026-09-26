@@ -5,14 +5,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import gsap from 'gsap';
 
 import { initSmoothScroll, prefersReducedMotion } from '@/lib/motion/lenis';
-import {
-  onRouteSettled,
-  specimenNavigate,
-  veilNavigate,
-} from '@/lib/motion/route-veil';
+import { veilNavigate, onRouteSettled } from '@/lib/motion/route-veil';
 import { playVoice } from '@/lib/motion/sound';
 import { SPRING } from '@/lib/motion/tokens';
-import type { SpecimenStateName } from '@/lib/specimen-geometry';
 
 /**
  * The motion root — one client component that mounts the entire Measured
@@ -22,7 +17,7 @@ import type { SpecimenStateName } from '@/lib/specimen-geometry';
  *
  * Owned concerns:
  *   1. Lenis + GSAP single-ticker smooth scroll, with reduced-motion bypass
- *   2. Route-transition delegation — T1 paper veil, T2 shared specimen
+ *   2. Route-transition delegation — the T1 paper veil on every navigation
  *   3. Magnetic hover on primary buttons (the magnetic spring)
  *   4. Pointer-entry-side underline direction (the intent grammar)
  *   5. Sound voices for button activation and primary-affordance hover
@@ -95,31 +90,6 @@ export function MotionRoot() {
 
       event.preventDefault();
       navigated.current = true;
-
-      // T2 — the shared specimen, exactly three click sites on the site.
-      // The source is whatever specimen the reader was actually looking
-      // at: the rail on desktop, the row's own plate on mobile.
-      const specimenState = anchor.dataset.specimenLink as
-        | SpecimenStateName
-        | undefined;
-      if (specimenState) {
-        const candidates: Array<HTMLElement | null> = [
-          document.querySelector<HTMLElement>('[data-specimen-source]'),
-          anchor.querySelector<HTMLElement>('[data-row-plate]'),
-          anchor,
-        ];
-        const source =
-          candidates.find(
-            (el) => el && el.getBoundingClientRect().width > 1,
-          ) ?? anchor;
-        specimenNavigate(
-          url.pathname + url.search + url.hash,
-          (href) => router.push(href),
-          specimenState,
-          source.getBoundingClientRect(),
-        );
-        return;
-      }
 
       // T1 — the paper veil, the site's signature.
       veilNavigate(url.pathname + url.search + url.hash, (href) =>
