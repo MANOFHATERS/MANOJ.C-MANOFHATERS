@@ -51,13 +51,36 @@ jobs:
       - name: Evaluate the guide
         run: npm run api:eval
 
+      # Colours live in globals.css as tokens. The ban list (PRD Appendix B)
+      # extends the rule: no Tailwind default palette values and no cheap-AI
+      # hexes may appear anywhere in the repository, not only in components.
       - name: No raw hex colours in components
         run: |
+          # themeColor in the viewport export is the one place a literal is
+          # required: the browser chrome cannot read a CSS variable. It is
+          # documented in layout.tsx and excluded here by line, not by file.
           if grep -rInE "#[0-9a-fA-F]{6}\b" apps/web/components apps/web/app \
                --include="*.tsx" --include="*.ts" \
-               | grep -v "specimen-still-svg\|SpecimenStill\|SpecimenCanvas\|/og.tsx\|apple-icon\|icon.svg"; then
+               | grep -v "specimen-still-svg\|SpecimenStill\|SpecimenCanvas\|/og.tsx\|apple-icon\|icon.svg\|themeColor"; then
             echo "Raw hex found outside the places allowed to hold it."
             echo "Colours belong in globals.css as tokens."
+            exit 1
+          fi
+
+      - name: The ban list — cheap-AI palette values must not appear
+        run: |
+          # PRD Appendix B: the AI-slop palette. None of these values may
+          # appear anywhere in the source (globals.css included).
+          BANNED="0F172A 020617 18181B 09090B 7C3AED 8B5CF6 6366F1 4F46E5 9333EA A855F7 2563EB 06B6D4 22D3EE"
+          FOUND=0
+          for hex in $BANNED; do
+            if grep -rIn "#$hex\b" apps packages --include="*.tsx" --include="*.ts" --include="*.css"; then
+              echo "BANNED colour #$hex found."
+              FOUND=1
+            fi
+          done
+          if [ "$FOUND" = "1" ]; then
+            echo "The ban list exists because these are the most-seen values on the web."
             exit 1
           fi
 
@@ -76,8 +99,8 @@ jobs:
             "https://github.com/MANOFHATERS/tailgen" \
             "https://github.com/MANOFHATERS/atmosview-weather" \
             "https://fonts.google.com/specimen/Newsreader" \
-            "https://fonts.google.com/specimen/Schibsted+Grotesk" \
-            "https://fonts.google.com/specimen/IBM+Plex+Mono"
+            "https://www.fontshare.com/fonts/switzer" \
+            "https://www.jetbrains.com/lp/mono/"
           do
             code=$(curl -s -o /dev/null -w "%{http_code}" -L --max-time 20 \
                    -A "Mozilla/5.0 (compatible; manoj-portfolio-linkcheck)" "$url" || echo 000)
