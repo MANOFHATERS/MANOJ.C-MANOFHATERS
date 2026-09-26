@@ -29,15 +29,18 @@ export function ResumeLink({
 export function EmailLink({
   children,
   className = '',
+  style,
 }: {
   children: ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <a
       href={identity.emailHref}
       onClick={() => track('email_click')}
       className={className}
+      style={style}
     >
       {children}
     </a>

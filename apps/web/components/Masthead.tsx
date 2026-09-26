@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { identity, navigation } from '@manoj/content/profile';
+import { identity, navigation, socialLinks } from '@manoj/content/profile';
 import { useAsk } from '@/components/ask/AskProvider';
 import { track } from '@/lib/events';
+import { AvailabilityLine } from '@/components/Availability';
+import { ArrowNE } from '@/components/Icons';
 
 const SECTION_LABELS: Record<string, string> = {
   '01': 'Hero',
@@ -17,9 +19,24 @@ const SECTION_LABELS: Record<string, string> = {
   '08': 'Contact',
 };
 
+/** The overlay links: the site's sections, plus the two cross-cutting pages.
+ *  The § numbers are the page's own section numbers, not list indices. */
+const MENU_LINKS = [
+  { label: 'Work', href: '/#work', mark: '§03' },
+  { label: 'How I work', href: '/#how-i-work', mark: '§04' },
+  { label: 'About', href: '/#about', mark: '§06' },
+  { label: 'Ask Manoj', href: '/#ask', mark: '§07', ask: true },
+  { label: 'Contact', href: '/#contact', mark: '§08' },
+  { label: 'Résumé', href: '/resume', mark: 'PDF' },
+];
+
 /**
  * 64px tall. Sticks on scroll-up only, so scrolling down gives the page back
  * its full height and scrolling up always has navigation within reach.
+ *
+ * "Menu" opens the full-screen overlay — the Snellenberg structure: big
+ * links, a socials column, location, local time and availability, all
+ * inside the overlay. Links roll their labels on hover.
  */
 export function Masthead() {
   const [hidden, setHidden] = useState(false);
@@ -83,126 +100,245 @@ export function Masthead() {
     return () => observer.disconnect();
   }, []);
 
+  /* The overlay locks the page beneath it. */
+  useEffect(() => {
+    if (!menuOpen) return;
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.insetInline = '0';
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.insetInline = '';
+      window.scrollTo(0, scrollY);
+    };
+  }, [menuOpen]);
+
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+
   useEffect(() => {
     if (!menuOpen) return;
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setMenuOpen(false);
+      if (e.key === 'Escape') closeMenu();
     }
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [menuOpen]);
+  }, [menuOpen, closeMenu]);
 
   return (
-    <header
-      className="no-print fixed inset-x-0 top-0 z-50 transition-transform duration-300 will-change-transform"
-      style={{
-        transform: hidden && !menuOpen ? 'translateY(-100%)' : 'translateY(0)',
-        backgroundColor: atTop ? 'transparent' : 'color-mix(in srgb, var(--color-paper) 88%, transparent)',
-        backdropFilter: atTop ? 'none' : 'blur(8px)',
-        borderBottom: atTop ? '1px solid transparent' : '1px solid var(--color-rule)',
-      }}
-    >
-      <nav
-        aria-label="Primary"
-        className="shell flex items-center justify-between"
-        style={{ height: 'var(--masthead-h)' }}
+    <>
+      <header
+        className="no-print fixed inset-x-0 top-0 z-50 transition-transform duration-300 will-change-transform"
+        style={{
+          transform: hidden && !menuOpen ? 'translateY(-100%)' : 'translateY(0)',
+          backgroundColor: menuOpen
+            ? 'transparent'
+            : atTop
+              ? 'transparent'
+              : 'color-mix(in srgb, var(--bg) 88%, transparent)',
+          backdropFilter: atTop && !menuOpen ? 'none' : 'blur(8px)',
+          borderBottom:
+            atTop || menuOpen
+              ? '1px solid transparent'
+              : '1px solid var(--border-subtle)',
+        }}
       >
-        <div className="flex items-baseline gap-3">
-          <Link
-            href="/"
-            className="font-[family-name:var(--font-serif)] text-[1.35rem] leading-none tracking-[-0.02em]"
-          >
-            Manoj C
-          </Link>
-          <span
-            className="mono hidden text-[var(--step-micro)] text-[var(--color-pigment)] sm:inline tabular"
-            aria-hidden="true"
-          >
-            {active ? `§${active}` : ''}
-          </span>
-          <span className="sr-only" aria-live="polite">
-            {active && SECTION_LABELS[active]
-              ? `Section ${active}, ${SECTION_LABELS[active]}`
-              : ''}
-          </span>
-        </div>
-
-        {/* Desktop */}
-        <div className="hidden items-center gap-7 md:flex">
-          {navigation.map((item) => (
-            <Link key={item.href} href={item.href} className="ui text-[var(--step-caption)] ink-link">
-              {item.label}
+        <nav
+          aria-label="Primary"
+          className="shell flex items-center justify-between"
+          style={{ height: 'var(--masthead-h)' }}
+        >
+          <div className="flex items-baseline gap-3">
+            <Link
+              href="/"
+              onClick={menuOpen ? closeMenu : undefined}
+              className="inline-flex items-center py-1.5 font-[family-name:var(--font-serif)] text-[1.35rem] leading-none tracking-[-0.02em]"
+            >
+              Manoj C
             </Link>
-          ))}
-          <button
-            type="button"
-            onClick={() => openAsk()}
-            className="ui text-[var(--step-caption)] ink-link"
-          >
-            Ask
-          </button>
-          <a
-            href={identity.emailHref}
-            onClick={() => track('email_click')}
-            className="ui text-[var(--step-caption)] text-[var(--color-pigment)] ink-link"
-          >
-            Email
-          </a>
-        </div>
+            <span
+              className="mono hidden text-[var(--step-micro)] text-[var(--action)] sm:inline tabular"
+              aria-hidden="true"
+            >
+              {active && !menuOpen ? `§${active}` : ''}
+            </span>
+            <span className="sr-only" aria-live="polite">
+              {active && SECTION_LABELS[active]
+                ? `Section ${active}, ${SECTION_LABELS[active]}`
+                : ''}
+            </span>
+          </div>
 
-        {/* Phone */}
-        <div className="flex items-center gap-4 md:hidden">
-          <button
-            type="button"
-            onClick={() => openAsk()}
-            className="ui text-[var(--step-caption)] ink-link"
-          >
-            Ask
-          </button>
+          {/* Desktop — inline nav, no overlay needed */}
+          <div className="hidden items-center gap-7 md:flex">
+            {navigation.map((item) => (
+              <Link key={item.href} href={item.href} className="ui text-[var(--step-small)] ink-link">
+                {item.label}
+              </Link>
+            ))}
+            <button
+              type="button"
+              onClick={() => openAsk()}
+              className="ui text-[var(--step-small)] ink-link"
+            >
+              Ask
+            </button>
+            <a
+              href={identity.emailHref}
+              onClick={() => track('email_click')}
+              className="ui text-[var(--step-small)] text-[var(--action)] ink-link"
+            >
+              Email
+            </a>
+          </div>
+
+          {/* Phone — the overlay lives here */}
+          <div className="flex items-center gap-4 md:hidden">
+            <button
+              type="button"
+              onClick={() => openAsk()}
+              className="ui text-[var(--step-small)] ink-link"
+            >
+              Ask
+            </button>
+            <button
+              type="button"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-expanded={menuOpen}
+              aria-controls="site-menu"
+              className="ui text-[var(--step-small)] ink-link"
+            >
+              {menuOpen ? 'Close' : 'Menu'}
+            </button>
+          </div>
+
+          {/* Desktop — Menu opens the same overlay */}
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
-            aria-controls="mobile-menu"
-            className="ui text-[var(--step-caption)] ink-link"
+            aria-controls="site-menu"
+            className="ui hidden text-[var(--step-small)] ink-link md:inline-flex"
           >
             {menuOpen ? 'Close' : 'Menu'}
           </button>
-        </div>
-      </nav>
+        </nav>
+      </header>
 
-      {menuOpen ? (
+      {/* ── The full-screen menu ─────────────────────────────────────── */}
+      <div
+        id="site-menu"
+        aria-hidden={!menuOpen}
+        inert={!menuOpen}
+        className="no-print fixed inset-0 z-40 flex flex-col overflow-y-auto bg-[var(--bg)]"
+        style={{
+          opacity: menuOpen ? 1 : 0,
+          visibility: menuOpen ? 'visible' : 'hidden',
+          transition:
+            'opacity 420ms var(--ease-settle), visibility 0s linear ' +
+            (menuOpen ? '0s' : '420ms'),
+        }}
+      >
         <div
-          id="mobile-menu"
-          className="md:hidden border-t border-[var(--color-rule)] bg-[var(--color-paper-raised)]"
+          className="shell flex w-full flex-1 flex-col justify-end pb-10 pt-[calc(var(--masthead-h)+4vh)]"
+          onClick={closeMenu}
         >
-          <ul className="shell list-none m-0 py-4">
-            {navigation.map((item) => (
-              <li key={item.href} className="border-b border-[var(--color-rule)] last:border-0">
-                <Link
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="block py-3.5 font-[family-name:var(--font-serif)] text-[1.25rem]"
-                >
-                  {item.label}
-                </Link>
+          <ul className="m-0 list-none p-0">
+            {MENU_LINKS.map((item, i) => (
+              <li
+                key={item.label}
+                className="border-t border-[var(--border-subtle)] last:border-b"
+                style={{
+                  opacity: menuOpen ? 1 : 0,
+                  transform: menuOpen ? 'translateY(0)' : 'translateY(14px)',
+                  transition: `opacity 480ms var(--ease-settle) ${90 + i * 60}ms, transform 480ms var(--ease-settle) ${90 + i * 60}ms`,
+                }}
+              >
+                {item.ask ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeMenu();
+                      openAsk();
+                    }}
+                    className="group flex w-full items-baseline justify-between py-4 text-left font-[family-name:var(--font-serif)] tracking-[-0.02em]"
+                    >
+                      <span className="roll" style={{ fontSize: 'var(--step-h2)', lineHeight: 1.1 }}>
+                        <span>
+                          <span>{item.label}</span>
+                          <span aria-hidden="true">{item.label}</span>
+                        </span>
+                      </span>
+                      <span className="mono text-[var(--step-micro)] text-[var(--text-muted)]">
+                        §07
+                      </span>
+                    </button>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      onClick={closeMenu}
+                      className="group flex items-baseline justify-between py-4 font-[family-name:var(--font-serif)] tracking-[-0.02em]"
+                    >
+                      <span className="roll" style={{ fontSize: 'var(--step-h2)', lineHeight: 1.1 }}>
+                        <span>
+                          <span>{item.label}</span>
+                          <span aria-hidden="true">{item.label}</span>
+                        </span>
+                      </span>
+                      <span className="mono text-[var(--step-micro)] text-[var(--text-muted)]">
+                        {item.mark}
+                      </span>
+                    </Link>
+                  )}
               </li>
             ))}
-            <li className="pt-4">
-              <a
-                href={identity.emailHref}
-                onClick={() => {
-                  track('email_click');
-                  setMenuOpen(false);
-                }}
-                className="btn btn--pigment w-full justify-center"
-              >
-                Email Manoj
-              </a>
-            </li>
           </ul>
+
+          {/* The meta band: socials, location, availability */}
+          <div
+            className="mt-10 flex flex-col gap-6"
+            style={{
+              opacity: menuOpen ? 1 : 0,
+              transition: 'opacity 480ms var(--ease-settle) 460ms',
+            }}
+          >
+            <ul className="m-0 flex flex-wrap gap-x-6 gap-y-2 list-none p-0">
+              {socialLinks.map((s) => (
+                <li key={s.label}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={closeMenu}
+                    className="ui inline-flex items-center gap-1.5 text-[var(--step-small)] ink-link"
+                  >
+                    {s.label}
+                    <ArrowNE size={11} />
+                  </a>
+                </li>
+              ))}
+              <li>
+                <a
+                  href={identity.emailHref}
+                  onClick={() => {
+                    track('email_click');
+                    closeMenu();
+                  }}
+                  className="ui text-[var(--step-small)] ink-link"
+                >
+                  Email
+                </a>
+              </li>
+            </ul>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <AvailabilityLine />
+              <p className="micro">© {new Date().getFullYear()} {identity.name}</p>
+            </div>
+          </div>
         </div>
-      ) : null}
-    </header>
+      </div>
+    </>
   );
 }

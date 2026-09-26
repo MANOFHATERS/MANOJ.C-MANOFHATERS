@@ -3,6 +3,7 @@ import { SectionMark } from '@/components/Section';
 import { ResumeLink } from '@/components/TrackedLinks';
 import { SpecimenInline } from '@/components/specimen/Specimen';
 import { FigureCaption } from '@/components/Primitives';
+import { AvailabilityLine } from '@/components/Availability';
 
 /**
  * §01.
@@ -32,9 +33,13 @@ export function Hero() {
       <div className="shell">
         <div className="grid12">
           <div className="col-span-12 lg:col-span-8">
-            <div className="mb-8 flex items-baseline gap-4">
+            <div className="mb-8 flex flex-wrap items-baseline gap-x-4 gap-y-2">
               <SectionMark mark="01" />
               <span className="micro">Bengaluru, India</span>
+            </div>
+
+            <div className="mb-8">
+              <AvailabilityLine />
             </div>
 
             <h1
@@ -45,7 +50,7 @@ export function Hero() {
                 // its own measure in eight columns, and a size that overflows
                 // the column is a size that is too big, whatever the scale says.
                 fontSize: 'clamp(2.6rem, 1.1rem + 5.4vw, 5.75rem)',
-                lineHeight: 0.98,
+                lineHeight: 1.04,
                 fontWeight: 350,
               }}
             >
@@ -63,7 +68,6 @@ export function Hero() {
             <p className="lede enter mt-10 max-w-[46ch] font-[family-name:var(--font-sans)]">
               {standfirst}
             </p>
-
             <div className="enter mt-10 flex flex-wrap items-center gap-3">
               <a href="#work" className="btn btn--pigment">
                 Read the work
@@ -81,7 +85,7 @@ export function Hero() {
               <SpecimenInline state="graph" className="absolute inset-0" />
             </div>
             <FigureCaption id="Fig. 1.3">
-              The DrugOS knowledge graph as a specimen. The vermilion path is an
+              The DrugOS knowledge graph as a specimen. The blue path is an
               illustrative repurposing route — drug to protein to pathway to
               disease. Not a model prediction.
             </FigureCaption>

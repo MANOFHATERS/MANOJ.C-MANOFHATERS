@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { projects } from '@manoj/content/projects';
 import { SectionMark, Rule } from '@/components/Section';
 import { SpecimenInline } from '@/components/specimen/Specimen';
+import { ArrowSwap } from '@/components/Icons';
 
 /**
  * §03.
@@ -65,11 +66,7 @@ export function SelectedWork() {
                       </span>
                     </h3>
 
-                    <p className="caption mt-3 font-[family-name:var(--font-sans)]">
-                      {p.role} · {p.team} · {p.year}
-                    </p>
-
-                    <p className="prose-measure mt-5 text-[0.97em] leading-[1.55] text-[var(--color-graphite)]">
+                    <p className="prose-measure mt-5 text-[0.97em] leading-[1.55] text-[var(--text-secondary)]">
                       {p.tagline}
                     </p>
 
@@ -95,13 +92,21 @@ export function SelectedWork() {
                     </div>
                   </div>
 
+                  <div className="col-span-12 lg:col-start-8 lg:col-span-3 lg:flex lg:items-end">
+                    <div className="w-full">
+                      <p className="caption mt-3 lg:mt-0 lg:text-right font-[family-name:var(--font-mono)] text-[var(--step-micro)] uppercase tracking-[0.06em] lg:whitespace-nowrap">
+                        {p.role} · {p.team}
+                      </p>
+                      <p className="mono text-[var(--step-micro)] text-[var(--text-muted)] lg:text-right mt-1.5">
+                        {p.year}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* The drawn arrow at the last column. It swaps along its
+                      own axis on hover — the site’s signature micro-move. */}
                   <div className="hidden lg:col-start-12 lg:col-span-1 lg:flex lg:items-end lg:justify-end">
-                    <span
-                      aria-hidden="true"
-                      className="mono text-[var(--step-caption)] text-[var(--color-graphite)] transition-transform duration-[var(--dur-base)] ease-[var(--ease-settle)] group-hover:translate-x-1 group-hover:text-[var(--color-pigment)]"
-                    >
-                      →
-                    </span>
+                    <ArrowSwap direction="ne" size={15} className="text-[var(--text-muted)] group-hover:text-[var(--action)]" />
                   </div>
                 </div>
               </Link>

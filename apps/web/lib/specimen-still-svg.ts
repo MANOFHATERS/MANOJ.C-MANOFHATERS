@@ -25,12 +25,13 @@ const CAMERA_Z: Record<SpecimenStateName, number> = {
   field: 5.8,
 };
 
-const INK = '#16140F';
+const INK = '#1A1917';
 // A shade deeper than the live porcelain: without three.js shading a node at
-// #FBF8F2 on #F6F2EA paper reads as a hole rather than as an object.
-const PORCELAIN = '#EDE6D8';
-const PIGMENT = '#B23A1E';
-const RULE = '#C4BBA6';
+// paper colour on #FAF9F6 paper reads as a hole rather than as an object.
+const PORCELAIN = '#EAE7DC';
+/* International Klein Blue — the one signal colour, 10.15:1 on paper. */
+const PIGMENT = '#002FA7';
+const RULE = '#D6D3C8';
 
 function project(x: number, y: number, z: number, camZ: number) {
   const f = 1 / Math.tan((30 * Math.PI) / 180 / 2);
@@ -69,7 +70,7 @@ export function specimenStillSvg(state: SpecimenStateName): string {
       })
       .join('');
     parts.push(
-      `<path d="${lines}" stroke="${INK}" stroke-width="0.6" stroke-opacity="0.3" fill="none"/>`,
+      `<path d="${lines}" stroke="${INK}" stroke-width="0.6" stroke-opacity="0.2" fill="none"/>`,
     );
     const hp = heroPath
       .map((i) => {

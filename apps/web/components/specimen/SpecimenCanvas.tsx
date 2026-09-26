@@ -29,11 +29,12 @@ import {
 
 /* ── Pigment, as three.js sees it ──────────────────────────────────────── */
 
-const INK = new THREE.Color('#16140f');
-const PORCELAIN = new THREE.Color('#fbf8f2');
-const PIGMENT = new THREE.Color('#b23a1e');
-const GRAPHITE = new THREE.Color('#4a463e');
-const RULE = new THREE.Color('#d9d2c3');
+const INK = new THREE.Color('#1A1917');
+const PORCELAIN = new THREE.Color('#F0EEE6');
+/* International Klein Blue — pigment marks meaning, never decoration. */
+const PIGMENT = new THREE.Color('#002FA7');
+const GRAPHITE = new THREE.Color('#403E39');
+const RULE = new THREE.Color('#D6D3C8');
 
 export type Tier = 'high' | 'standard';
 
@@ -188,7 +189,9 @@ function EdgeLines({
 
   // In the histogram and the map the edges would be noise, so they fade out
   // rather than following the nodes into a shape they do not describe.
-  const opacity = state === 'graph' ? 0.35 : 0.06;
+  // In the graph they sit well behind the text in weight — hairlines, not
+  // cobwebs competing with the column of prose beside them.
+  const opacity = state === 'graph' ? 0.22 : 0.05;
 
   return (
     <lineSegments geometry={geometry} frustumCulled={false}>
@@ -436,27 +439,27 @@ export default function SpecimenCanvas({
       {/* A studio rig built from lights rather than an environment map.
           drei's <Environment> would give the graphite nodes a richer specular,
           but it pulls a PMREM generator and a cube-render pipeline into the
-          chunk for a difference nobody would name. Four lights cost nothing:
-          a soft key from the upper left as if from a window, a cool fill from
-          the right, a warm bounce off the paper, and ambient to keep the
-          porcelain from going muddy in the shadows. */}
-      <ambientLight intensity={1.15} color="#fdfaf4" />
-      <directionalLight position={[-3.2, 4.2, 3.4]} intensity={2.4} color="#fff8ec" />
-      <directionalLight position={[3.4, 0.6, 2.2]} intensity={0.75} color="#eef2f6" />
-      <directionalLight position={[0, -3.2, 1.5]} intensity={0.5} color="#efe6d2" />
-      <hemisphereLight args={['#ffffff', '#ded5c2', 0.65]} />
+          chunk for a difference nobody would name. The rig is deliberately
+          FLAT — closer to print than to studio: high ambient, one restrained
+          key, weak fills — so the nodes read as ink printed on the paper
+          rather than glossy spheres floating in front of it. */}
+      <ambientLight intensity={1.5} color="#fdfaf4" />
+      <directionalLight position={[-3.2, 4.2, 3.4]} intensity={1.35} color="#fff8ec" />
+      <directionalLight position={[3.4, 0.6, 2.2]} intensity={0.5} color="#eef2f6" />
+      <directionalLight position={[0, -3.2, 1.5]} intensity={0.35} color="#efe6d2" />
+      <hemisphereLight args={['#ffffff', '#ded5c2', 0.55]} />
 
       <Specimen state={state} tier={tier} onHover={handleHover} />
 
       {tier === 'high' ? (
         <ContactShadows
           position={[0, -1.85, 0]}
-          opacity={0.2}
+          opacity={0.3}
           scale={8}
-          blur={2.8}
+          blur={1.4}
           far={3}
           resolution={256}
-          color="#16140f"
+          color="#1A1917"
         />
       ) : null}
     </Canvas>

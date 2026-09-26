@@ -126,8 +126,8 @@ export function SpecimenStill({
           : nodeFinish[i] === 1
             ? 'var(--color-ink)'
             // Deeper than the live porcelain, for the same reason as in
-            // lib/specimen-still-svg.ts: flat #FBF8F2 on paper reads as a hole.
-            : '#EDE6D8';
+            // lib/specimen-still-svg.ts: flat paper on paper reads as a hole.
+            : '#EAE7DC';
         return (
           <circle
             key={i}

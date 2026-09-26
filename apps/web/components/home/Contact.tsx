@@ -3,8 +3,14 @@ import { SectionMark, Rule } from '@/components/Section';
 import { CopyButton } from '@/components/CopyButton';
 import { InkLink } from '@/components/Primitives';
 import { EmailLink, PhoneLink, ResumeLink } from '@/components/TrackedLinks';
+import { ArrowNE } from '@/components/Icons';
 
-/** §08. Every link here opens a real destination on the first click. */
+/**
+ * §08. The quiet detail section: every route to Manoj, each one working on
+ * the first click. The loud version of contact — the giant email, the
+ * availability line, "Let's talk" — lives in the ink band of the footer,
+ * which this section deliberately hands off to.
+ */
 export function Contact() {
   return (
     <section
@@ -26,72 +32,64 @@ export function Contact() {
           </div>
         </div>
 
-        <div className="grid12">
-          <div className="col-span-12 lg:col-start-3 lg:col-span-8">
-            <p className="caption mb-4">{contact.lede}</p>
+        <div className="grid12 gap-y-12">
+          <div className="col-span-12 lg:col-start-3 lg:col-span-6">
+            <p className="caption mb-6">{contact.lede}</p>
+            <p className="prose-measure text-[1.05em] leading-[1.55]">
+              {contact.openTo}
+            </p>
 
-            <EmailLink className="ink-link block font-[family-name:var(--font-serif)] tracking-[-0.025em] break-words">
-              <span
-                style={{
-                  fontSize: 'clamp(1.6rem, 1rem + 3.2vw, 3.4rem)',
-                  lineHeight: 1.05,
-                  fontWeight: 350,
-                }}
-              >
-                {identity.email}
-              </span>
-            </EmailLink>
-
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <EmailLink className="btn btn--pigment">Email Manoj</EmailLink>
               <CopyButton value={identity.email} label="Copy address" event="email_copy" />
               <ResumeLink className="btn">Download résumé</ResumeLink>
             </div>
+          </div>
 
-            <p className="prose-measure mt-12 text-[1.05em] leading-[1.55]">
-              {contact.openTo}
-            </p>
-
-            <dl className="mt-12 grid grid-cols-1 gap-x-8 sm:grid-cols-3">
-              <div className="border-t border-[var(--color-rule)] py-5">
-                <dt className="micro mb-2">Phone</dt>
+          <div className="col-span-12 lg:col-start-9 lg:col-span-4">
+            <dl className="m-0 grid grid-cols-1 gap-x-8 sm:grid-cols-3 lg:grid-cols-1">
+              <div className="border-t border-[var(--border-subtle)] py-5">
+                <dt className="micro mb-2">Email</dt>
                 <dd className="m-0">
-                  <PhoneLink className="mono ink-link text-[0.98rem]">
-                    {identity.phone}
-                  </PhoneLink>
-                  <span className="mt-2 block">
-                    <CopyButton
-                      value="+918310907674"
-                      label="Copy"
-                      event="phone_click"
-                      className="!px-2 !py-1 !min-h-0"
-                    />
-                  </span>
+                  <EmailLink className="ui break-all text-[var(--step-small)] ink-link">
+                    {identity.email}
+                  </EmailLink>
                 </dd>
               </div>
 
-              <div className="border-t border-[var(--color-rule)] py-5">
+              <div className="border-t border-[var(--border-subtle)] py-5">
+                <dt className="micro mb-2">Phone</dt>
+                <dd className="m-0">
+                  <PhoneLink className="mono ink-link text-[0.95rem]">
+                    {identity.phone}
+                  </PhoneLink>
+                </dd>
+              </div>
+
+              <div className="border-t border-[var(--border-subtle)] py-5">
                 <dt className="micro mb-2">GitHub</dt>
                 <dd className="m-0">
                   <InkLink
                     href={identity.github}
                     external
-                    className="ui text-[var(--step-caption)]"
+                    className="ui inline-flex items-center gap-1.5 text-[var(--step-small)]"
                   >
                     {identity.githubHandle}
+                    <ArrowNE size={11} />
                   </InkLink>
                 </dd>
               </div>
 
-              <div className="border-t border-[var(--color-rule)] py-5">
+              <div className="border-t border-[var(--border-subtle)] py-5">
                 <dt className="micro mb-2">LinkedIn</dt>
                 <dd className="m-0">
                   <InkLink
                     href={identity.linkedin}
                     external
-                    className="ui text-[var(--step-caption)] break-all"
+                    className="ui inline-flex items-center gap-1.5 text-[var(--step-small)] break-all"
                   >
                     {identity.linkedinHandle}
+                    <ArrowNE size={11} />
                   </InkLink>
                 </dd>
               </div>

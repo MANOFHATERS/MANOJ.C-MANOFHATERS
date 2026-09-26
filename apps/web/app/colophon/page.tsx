@@ -95,7 +95,7 @@ export default function Colophon() {
             <ul className="m-0 list-none p-0">
               {[
                 'Light only. There is no dark mode and no theme toggle — not because it was forgotten, but because the whole art direction is warm paper and black ink, and a dark inversion of it would be a different and worse site.',
-                'One accent colour, oxide vermilion, used only where it means something: the section marks, links, the highlighted path in the specimen, the left tail of the distribution.',
+                'One accent colour, International Klein Blue — Yves Klein’s registered formula of 1960 — used only where it means something: the section marks, links, the highlighted path in the specimen, the left tail of the distribution. At 10.15:1 on this paper it is link-safe and AAA at every size.',
                 'One 3D object, loaded after the text has painted, paused whenever it is off-screen or the tab is hidden, and replaced by a vector still for anyone who has asked for reduced motion or has no WebGL.',
                 'No animation library. Scroll-linked motion is native CSS inside a @supports block, so a browser without it shows finished content rather than content stuck at zero opacity.',
                 'No cookies, no third-party scripts, no analytics that can identify you.',

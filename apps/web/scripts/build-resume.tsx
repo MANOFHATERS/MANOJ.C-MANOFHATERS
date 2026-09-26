@@ -42,41 +42,45 @@ Font.register({
   src: path.join(FONTS, 'Newsreader-Static.ttf'),
 });
 Font.register({
-  family: 'Schibsted',
-  src: path.join(FONTS, 'SchibstedGrotesk-Static.ttf'),
+  family: 'Switzer',
+  src: path.join(FONTS, 'Switzer-Regular.ttf'),
 });
 Font.register({
-  family: 'PlexMono',
-  src: path.join(FONTS, 'IBMPlexMono-Regular.ttf'),
+  family: 'Switzer-Medium',
+  src: path.join(FONTS, 'Switzer-Medium.ttf'),
+});
+Font.register({
+  family: 'JBMono',
+  src: path.join(FONTS, 'JetBrainsMono-Regular.ttf'),
 });
 
 // Let long URLs and hyphenated terms break naturally instead of overflowing.
 Font.registerHyphenationCallback((word) => [word]);
 
-const INK = '#16140F';
-const GRAPHITE = '#4A463E';
-const PIGMENT = '#B23A1E';
-const RULE = '#C4BBA6';
+const INK = '#1A1917';
+const GRAPHITE = '#403E39';
+const PIGMENT = '#002FA7';
+const RULE = '#D6D3C8';
 
 const s = StyleSheet.create({
   page: {
     paddingTop: 32,
     paddingBottom: 28,
     paddingHorizontal: 40, // ~14mm
-    fontFamily: 'Schibsted',
+    fontFamily: 'Switzer',
     fontSize: 9.2,
     color: INK,
     lineHeight: 1.42,
   },
   name: { fontFamily: 'Newsreader', fontSize: 25, color: INK, letterSpacing: -0.4 },
-  role: { fontFamily: 'Schibsted', fontSize: 9.6, color: GRAPHITE, marginTop: 3 },
+  role: { fontFamily: 'Switzer', fontSize: 9.6, color: GRAPHITE, marginTop: 3 },
   pigmentRule: { height: 1.2, backgroundColor: PIGMENT, marginTop: 7, marginBottom: 6 },
   hairline: { height: 0.6, backgroundColor: RULE, marginTop: 5, marginBottom: 7 },
   contact: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  contactItem: { fontFamily: 'PlexMono', fontSize: 7.6, color: GRAPHITE },
+  contactItem: { fontFamily: 'JBMono', fontSize: 7.6, color: GRAPHITE },
 
   h2: {
-    fontFamily: 'Schibsted',
+    fontFamily: 'Switzer',
     fontSize: 7.8,
     letterSpacing: 1.2,
     color: GRAPHITE,
@@ -92,7 +96,7 @@ const s = StyleSheet.create({
     alignItems: 'flex-end',
   },
   entryTitle: { fontFamily: 'Newsreader', fontSize: 11, color: INK },
-  entryMeta: { fontFamily: 'Schibsted', fontSize: 7.6, color: GRAPHITE },
+  entryMeta: { fontFamily: 'Switzer', fontSize: 7.6, color: GRAPHITE },
   entryDetail: { fontSize: 8.8, color: GRAPHITE, marginTop: 1.5 },
 
   bulletRow: { flexDirection: 'row', marginTop: 2.8 },
@@ -108,7 +112,7 @@ const s = StyleSheet.create({
   skillRow: { flexDirection: 'row', marginTop: 2.2 },
   skillGroup: {
     width: 78,
-    fontFamily: 'Schibsted',
+    fontFamily: 'Switzer',
     fontSize: 7.6,
     letterSpacing: 0.9,
     textTransform: 'uppercase',
@@ -125,7 +129,7 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  footerText: { fontFamily: 'PlexMono', fontSize: 7, color: GRAPHITE },
+  footerText: { fontFamily: 'JBMono', fontSize: 7, color: GRAPHITE },
 });
 
 function Resume() {

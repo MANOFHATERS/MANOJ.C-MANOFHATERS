@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import { IBM_Plex_Mono, Newsreader, Schibsted_Grotesk } from 'next/font/google';
+import localFont from 'next/font/local';
+import { Newsreader } from 'next/font/google';
 
 import { identity, site } from '@manoj/content/profile';
 import { projects } from '@manoj/content/projects';
@@ -21,17 +22,32 @@ const newsreader = Newsreader({
   adjustFontFallback: true,
 });
 
-const grotesk = Schibsted_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-grotesk',
+/* Switzer is ITF's deliberate Swiss neo-grotesk (Helvetica/Univers lineage),
+   Fontshare-only, so it ships as local static instances: two weights, 37 KB
+   total. Arial metric-adjustment keeps the swap shift-free. */
+const switzer = localFont({
+  src: [
+    { path: '../assets/fonts/Switzer-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../assets/fonts/Switzer-Medium.woff2', weight: '500', style: 'normal' },
+  ],
+  variable: '--font-switzer',
   display: 'swap',
+  adjustFontFallback: 'Arial',
 });
 
-const plexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-plex-mono',
+/* JetBrains Mono, self-hosted as latin subsets cut from the official TTFs.
+   The Google Fonts latin subset ships ↑ ↓ but not ← → ↗ (verified against
+   the served cmap), and this site draws its diagram labels and links with
+   those arrows — so the subsets are cut here to include them. 29 KB per
+   weight, ligatures preserved for code blocks. */
+const jbMono = localFont({
+  src: [
+    { path: '../assets/fonts/JetBrainsMono-Regular.sub.woff2', weight: '400', style: 'normal' },
+    { path: '../assets/fonts/JetBrainsMono-Medium.sub.woff2', weight: '500', style: 'normal' },
+  ],
+  variable: '--font-jbmono',
   display: 'swap',
+  adjustFontFallback: 'Arial',
 });
 
 export const metadata: Metadata = {
@@ -82,7 +98,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   // The browser chrome colour cannot read a CSS variable, so --color-paper
   // is repeated here literally. It is the only place on the site that does.
-  themeColor: '#F6F2EA',
+  themeColor: '#FAF9F6',
   colorScheme: 'light',
   width: 'device-width',
   initialScale: 1,
@@ -155,7 +171,7 @@ export default function RootLayout({
   return (
     <html
       lang="en-IN"
-      className={`${newsreader.variable} ${grotesk.variable} ${plexMono.variable}`}
+      className={`${newsreader.variable} ${switzer.variable} ${jbMono.variable}`}
     >
       <head>
         <StructuredData />

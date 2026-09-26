@@ -23,10 +23,10 @@ export default async function AppleIcon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#F6F2EA',
+          backgroundColor: '#FAF9F6',
           fontFamily: 'Newsreader',
           fontSize: 120,
-          color: '#B23A1E',
+          color: '#002FA7',
         }}
       >
         §

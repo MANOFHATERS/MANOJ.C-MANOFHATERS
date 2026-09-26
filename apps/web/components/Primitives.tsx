@@ -84,7 +84,7 @@ export function StackChips({ items }: { items: readonly string[] }) {
       {items.map((item) => (
         <li
           key={item}
-          className="micro border border-[var(--color-rule)] px-2 py-1 text-[var(--color-graphite)]"
+          className="micro border border-[var(--border-subtle)] px-2 py-1.5 text-[var(--text-muted)]"
         >
           {item}
         </li>

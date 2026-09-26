@@ -14,6 +14,7 @@ import {
 } from '@/components/Primitives';
 import { AskButton, RepoLink } from '@/components/TrackedLinks';
 import { SpecimenInline } from '@/components/specimen/Specimen';
+import { ArrowNE, ArrowSwap } from '@/components/Icons';
 import { DrugOSDiagram } from '@/components/diagrams/DrugOSDiagram';
 import { TailGenDiagram } from '@/components/diagrams/TailGenDiagram';
 import { AtmosViewDiagram } from '@/components/diagrams/AtmosViewDiagram';
@@ -144,6 +145,7 @@ export default async function CaseStudy({
             <div className="mt-9 flex flex-wrap gap-3">
               <RepoLink href={p.repo} className="btn btn--pigment">
                 View source on GitHub
+                <ArrowNE size={13} />
               </RepoLink>
               <AskButton question={p.askPrompt} className="btn">
                 Ask about this project
@@ -152,16 +154,16 @@ export default async function CaseStudy({
           </div>
 
           <figure className="col-span-12 lg:col-start-8 lg:col-span-5">
-            <div className="relative aspect-square w-full">
+            <div className="relative aspect-square w-full border border-[var(--border-subtle)] bg-[var(--bg-raised)]">
               <SpecimenInline state={p.specimen} className="absolute inset-0" />
             </div>
             <FigureCaption
               id={p.specimen === 'graph' ? 'Fig. 1.3' : p.specimen === 'tail' ? 'Fig. 2.3' : 'Fig. 3.3'}
             >
               {p.specimen === 'graph'
-                ? 'The specimen in its first state — the DrugOS knowledge graph. The vermilion route is illustrative, not a model prediction.'
+                ? 'The specimen in its first state — the DrugOS knowledge graph. The pigment route is illustrative, not a model prediction.'
                 : p.specimen === 'tail'
-                  ? 'The specimen in its second state — a histogram of daily returns. The vermilion nodes are the left tail; the dashed curve is the Gaussian.'
+                  ? 'The specimen in its second state — a histogram of daily returns. The pigment nodes are the left tail; the dashed curve is the Gaussian.'
                   : 'The specimen in its third state — four provider layers over India, offset from one another by their disagreement.'}
             </FigureCaption>
           </figure>
@@ -422,7 +424,10 @@ export default async function CaseStudy({
                   {next.name}
                 </span>
               </span>
-              <span className="caption mt-3 block max-w-[34ch]">{next.tagline}</span>
+              <span className="caption mt-3 flex max-w-[34ch] items-center gap-2">
+                <ArrowSwap direction="e" size={13} className="text-[var(--text-muted)] group-hover:text-[var(--action)]" />
+                {next.tagline}
+              </span>
             </Link>
           </div>
         </div>

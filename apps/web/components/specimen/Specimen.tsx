@@ -241,7 +241,7 @@ export function SpecimenRail() {
             {state === 'graph' ? 'Fig. 1.3' : state === 'tail' ? 'Fig. 2.3' : 'Fig. 3.3'}
           </span>
           {state === 'graph'
-            ? 'Illustrative repurposing path. Not a model prediction.'
+            ? 'Illustrative repurposing path, in pigment. Not a model prediction.'
             : state === 'tail'
               ? 'The dashed curve is the Gaussian the market is usually assumed to follow.'
               : 'Four layers, four providers, one place.'}

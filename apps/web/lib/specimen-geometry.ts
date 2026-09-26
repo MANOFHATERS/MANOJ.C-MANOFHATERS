@@ -357,9 +357,9 @@ export const STATE_POSITIONS: Record<SpecimenStateName, Float32Array> = {
 
 export const STATE_CAPTION: Record<SpecimenStateName, string> = {
   graph:
-    'A three-dimensional model of the DrugOS knowledge graph: 240 nodes of five types — drug, protein, pathway, disease and clinical outcome — joined by hairline edges, with one drug-to-outcome path picked out in vermilion.',
+    'A three-dimensional model of the DrugOS knowledge graph: 240 nodes of five types — drug, protein, pathway, disease and clinical outcome — joined by hairline edges, with one drug-to-outcome path picked out in pigment.',
   tail:
-    'The same 240 nodes rearranged into a histogram of daily market returns. The long left tail, drawn in vermilion, is the part a Gaussian model says should almost never happen.',
+    'The same 240 nodes rearranged into a histogram of daily market returns. The long left tail, drawn in pigment, is the part a Gaussian model says should almost never happen.',
   field:
     'The same 240 nodes settled into a scatter over the outline of India, in four layers offset from one another — four weather providers reporting the same places and disagreeing about them.',
 };

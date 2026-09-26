@@ -13,7 +13,7 @@ import type { SpecimenStateName } from './specimen-geometry';
  * needs no network and the card cannot silently fall back to Arial.
  *
  * The faces here are static instances cut from the variable originals
- * (Newsreader at wght 350 / opsz 36, Schibsted at wght 400). Satori cannot
+ * (Newsreader at wght 350 / opsz 36, Switzer at wght 400, JetBrains Mono at 400). Satori cannot
  * read a variable font — it throws while parsing the fvar table — so the
  * instancing is a requirement, not an optimisation.
  */
@@ -26,21 +26,21 @@ const FONT_DIR = path.join(process.cwd(), 'assets', 'fonts');
 async function fonts() {
   const [serif, sans, mono] = await Promise.all([
     readFile(path.join(FONT_DIR, 'Newsreader-Static-Light.ttf')),
-    readFile(path.join(FONT_DIR, 'SchibstedGrotesk-Static.ttf')),
-    readFile(path.join(FONT_DIR, 'IBMPlexMono-Regular.ttf')),
+    readFile(path.join(FONT_DIR, 'Switzer-Regular.ttf')),
+    readFile(path.join(FONT_DIR, 'JetBrainsMono-Regular.ttf')),
   ]);
   return [
     { name: 'Newsreader', data: serif, weight: 400 as const, style: 'normal' as const },
-    { name: 'Schibsted', data: sans, weight: 400 as const, style: 'normal' as const },
-    { name: 'PlexMono', data: mono, weight: 400 as const, style: 'normal' as const },
+    { name: 'Switzer', data: sans, weight: 400 as const, style: 'normal' as const },
+    { name: 'JBMono', data: mono, weight: 400 as const, style: 'normal' as const },
   ];
 }
 
-const PAPER = '#F6F2EA';
-const INK = '#16140F';
-const GRAPHITE = '#4A463E';
-const PIGMENT = '#B23A1E';
-const RULE = '#D9D2C3';
+const PAPER = '#FAF9F6';
+const INK = '#1A1917';
+const GRAPHITE = '#403E39';
+const PIGMENT = '#002FA7'; /* International Klein Blue */
+const RULE = '#D6D3C8';
 
 export async function renderOg({
   mark,
@@ -82,12 +82,12 @@ export async function renderOg({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <span style={{ fontFamily: 'PlexMono', fontSize: 20, color: PIGMENT }}>
+            <span style={{ fontFamily: 'JBMono', fontSize: 20, color: PIGMENT }}>
               §{mark}
             </span>
             <span
               style={{
-                fontFamily: 'Schibsted',
+                fontFamily: 'Switzer',
                 fontSize: 17,
                 letterSpacing: 2,
                 textTransform: 'uppercase',
@@ -114,7 +114,7 @@ export async function renderOg({
             {standfirst ? (
               <div
                 style={{
-                  fontFamily: 'Schibsted',
+                  fontFamily: 'Switzer',
                   fontSize: 22,
                   lineHeight: 1.45,
                   color: GRAPHITE,
@@ -135,7 +135,7 @@ export async function renderOg({
                 <div key={l} style={{ display: 'flex', flexDirection: 'column' }}>
                   <span
                     style={{
-                      fontFamily: 'Schibsted',
+                      fontFamily: 'Switzer',
                       fontSize: 13,
                       letterSpacing: 1.6,
                       textTransform: 'uppercase',
@@ -146,7 +146,7 @@ export async function renderOg({
                   </span>
                   <span
                     style={{
-                      fontFamily: 'PlexMono',
+                      fontFamily: 'JBMono',
                       fontSize: 24,
                       color: INK,
                       marginTop: 6,

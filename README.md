@@ -66,18 +66,24 @@ disagree with each other.
 
 ## The design
 
-Light only — by decision, not omission. Warm ivory paper, black ink, one
-pigment (oxide vermilion), hairline rules, numbered figures, and the section
-mark `§` borrowed from the DrugOS specification that governed that project's
-build and is cited 547 times in its code.
+Light only — by decision, not omission. Warm ivory paper (`#FAF9F6`), a warm
+ink ladder, one signal colour — International Klein Blue `#002FA7`, at
+10.15:1 on the paper, so it is link-safe and AAA at every size — hairline
+rules, numbered figures, and the section mark `§` borrowed from the DrugOS
+specification that governed that project's build and is cited 547 times in
+its code.
 
-- **Type:** Newsreader (display and prose), Schibsted Grotesk (interface),
-  IBM Plex Mono (every number). Old-style figures in prose, tabular lining
+- **Type:** Newsreader (display and prose, optical sizes 6–72), Switzer
+  (interface — ITF's Swiss neo-grotesk in the Helvetica/Univers lineage,
+  deliberately not Inter), JetBrains Mono (every number; the largest x-height
+  of any mono, self-hosted with the arrows `← → ↗` that the Google Fonts
+  latin subset does not ship). Old-style figures in prose, tabular lining
   figures in tables.
 - **Motion:** native CSS scroll-driven animation inside `@supports`, so a
   browser without it shows finished content rather than content stuck at zero
   opacity. No animation library in the bundle. Nothing travels more than 12px
-  or lasts more than 700ms.
+  or lasts more than 700ms. The drawn arrow system (custom SVGs, 1.5px
+  stroke, butt caps) carries the one hover signature: the arrow swap.
 - **Reduced motion:** all entrance and scroll-linked motion removed, and the
   specimen switches to stills.
 

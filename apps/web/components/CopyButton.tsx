@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import type { LinkEventName } from '@manoj/content/api-types';
 import { track } from '@/lib/events';
+import { IconCheck, IconCopy } from '@/components/Icons';
 
 /**
  * Many desktop visitors have no mail client, so every address on this site
- * is both a link and a copyable string. The label changes to "Copied" for
+ * is both a link and a copyable string. The label swaps to a drawn check for
  * two seconds and is announced politely — it is a confirmation, not an event
  * worth interrupting a screen reader for.
  */
@@ -60,6 +61,11 @@ export function CopyButton({
       className={`btn btn--quiet no-print ${className}`}
       aria-label={`${label} ${value}`}
     >
+      {copied ? (
+        <IconCheck size={13} />
+      ) : (
+        <IconCopy size={13} />
+      )}
       <span aria-hidden="true">{copied ? 'Copied' : label}</span>
       <span className="sr-only" role="status" aria-live="polite">
         {copied ? `${value} copied to clipboard` : ''}

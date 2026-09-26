@@ -1,40 +1,47 @@
 @import 'tailwindcss';
 
 /* ═══════════════════════════════════════════════════════════════════════
-   SCIENTIFIC ATELIER
-   A research monograph that happens to be interactive.
+   SCIENTIFIC ATELIER — token system
+   Implements the PRD design-token reference (Ch. 12) exactly:
+   paper #FAF9F6 family + ink ladder + International Klein Blue #002FA7,
+   Newsreader / Switzer / JetBrains Mono, Utopia fluid grid + space + type.
 
    Light only. Not by omission — by decision. There is no dark mode, no
    theme toggle, and no prefers-color-scheme override anywhere in this file.
    ═══════════════════════════════════════════════════════════════════════ */
 
 @theme {
-  /* ── Pigment ─────────────────────────────────────────────────────────
-     Warm ivory paper, black ink, one accent. Nothing else. */
-  --color-paper: #f6f2ea;
-  --color-paper-raised: #fbf8f2;
-  --color-paper-deep: #efe9dd;
-  --color-ink: #16140f;
-  --color-graphite: #4a463e;
-  --color-rule: #d9d2c3;
-  --color-rule-strong: #c4bba6;
-  --color-pigment: #b23a1e;
-  --color-pigment-deep: #8e2d16;
-  --color-pigment-wash: #f1ded6;
+  /* ── Pigment (PRD Ch. 6) ─────────────────────────────────────────────
+     Warm ivory paper, warm ink ladder, one signal colour: International
+     Klein Blue. Nothing else. Values dual-declared hex-first in :root. */
+  --color-paper: var(--paper-1);
+  --color-paper-raised: var(--paper-2);
+  --color-paper-deep: var(--paper-3);
+  --color-ink: var(--ink-1);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-graphite: var(--ink-2);
+  --color-rule: var(--hairline);
+  --color-rule-strong: var(--hairline-strong);
+  --color-pigment: var(--accent);
+  --color-pigment-deep: var(--accent-hover);
+  --color-pigment-wash: var(--accent-tint);
   --color-signal-ok: #2f5d46;
 
-  /* ── Type ────────────────────────────────────────────────────────── */
+  /* ── Type (PRD Ch. 5) ─────────────────────────────────────────────── */
   --font-serif: var(--font-newsreader), 'Iowan Old Style', 'Palatino Linotype',
     Palatino, Georgia, serif;
-  --font-sans: var(--font-grotesk), -apple-system, BlinkMacSystemFont,
-    'Segoe UI', sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, 'SFMono-Regular', Menlo,
-    monospace;
+  --font-sans: var(--font-switzer), 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: var(--font-jbmono), ui-monospace, 'Cascadia Code', Menlo,
+    Consolas, monospace;
 
-  /* ── Motion ──────────────────────────────────────────────────────────
-     Things settle, draw and turn. Nothing bounces, flies or glows. */
+  /* ── Motion (PRD Ch. 10) ─────────────────────────────────────────────
+     Things settle, draw and turn. Nothing bounces, flies or glows.
+     --ease-out is the Lusion-measured curve; --ease-expo for long scales. */
   --ease-settle: cubic-bezier(0.2, 0, 0, 1);
   --ease-draw: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out: cubic-bezier(0.4, 0, 0.1, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-quick: 160ms;
   --dur-base: 320ms;
   --dur-slow: 560ms;
@@ -44,33 +51,128 @@
 }
 
 :root {
-  /* Fluid type scale, interpolated between 360px and 1440px viewports. */
-  --step-display: clamp(3.5rem, 2rem + 6.67vw, 8rem);
-  --step-h1: clamp(2.5rem, 1.833rem + 2.96vw, 4.5rem);
-  --step-h2: clamp(1.75rem, 1.417rem + 1.48vw, 2.75rem);
-  --step-h3: clamp(1.375rem, 1.25rem + 0.56vw, 1.75rem);
-  --step-body: clamp(1.0625rem, 1.02rem + 0.19vw, 1.1875rem);
-  --step-caption: clamp(0.8125rem, 0.792rem + 0.09vw, 0.875rem);
-  --step-micro: 0.6875rem;
+  /* ═══ 1. GRID + SPACE (PRD Ch. 4, Utopia formula, 360→1440px) ═══ */
 
-  /* Grid. 12 columns, 1440 max, generous outer margins. */
-  --gutter: 1.5rem;
-  --margin: clamp(1.25rem, 6vw, 7rem);
-  --content-max: 90rem;
-  --measure: 34em; /* ~68 characters at body size */
+  --grid-columns: 4; /* mobile-first */
+  --grid-gutter: clamp(1rem, 0.6667rem + 1.4815vw, 2rem); /* 16→32px */
+  --grid-margin: clamp(1.5rem, 0.6667rem + 3.7037vw, 4rem); /* 24→64px */
 
-  /* Section rhythm */
-  --rhythm: 6rem;
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: clamp(0.75rem, 0.6667rem + 0.3704vw, 1rem);
+  --space-s: clamp(1rem, 0.8333rem + 0.7407vw, 1.5rem);
+  --space-m: clamp(1.5rem, 1.3333rem + 0.7407vw, 2rem);
+  --space-l: clamp(2rem, 1.6667rem + 1.4815vw, 3rem);
+  --space-xl: clamp(3rem, 2.6667rem + 1.4815vw, 4rem);
+  --space-2xl: clamp(4rem, 3.3333rem + 2.963vw, 6rem);
+  --space-3xl: clamp(6rem, 5.3333rem + 2.963vw, 8rem);
+  --space-4xl: clamp(8rem, 7.3333rem + 2.963vw, 10rem);
+  --space-5xl: clamp(10rem, 8.6667rem + 5.9259vw, 14rem);
+  --space-hero: clamp(7rem, 28vh, 12.5rem);
 
-  /* Maximum entrance travel. Nothing moves further than this. */
-  --travel: 12px;
-
+  /* Legacy aliases, kept so the shipped components keep working. */
+  --gutter: var(--grid-gutter);
+  --margin: var(--grid-margin);
+  --content-max: 105rem; /* 1680px — PRD container cap */
+  --measure: 45rem; /* 720px prose cap (~68ch) */
+  --rhythm: clamp(5rem, 4.333rem + 2.963vw, 8rem); /* section gap = space-3xl+ */
+  --rhythm-statement: clamp(6.5rem, 5.6667rem + 2.963vw, 10rem); /* space-4xl+ */
+  --travel: 12px; /* maximum entrance travel */
   --masthead-h: 4rem;
+
+  /* ═══ 2. TYPE SCALE (PRD Ch. 5.2, Utopia clamp, 360→1440px) ═══ */
+
+  --step-mega: clamp(4rem, 1.33rem + 11.9vw, 12rem); /* 64→192 */
+  --step-hero: clamp(3.25rem, 1.67rem + 7.04vw, 8rem); /* 52→128 */
+  --step-h1: clamp(2.62rem, 2.08rem + 2.41vw, 4.25rem); /* 42→68 */
+  --step-h2: clamp(2.06rem, 1.67rem + 1.76vw, 3.25rem); /* 33→52 */
+  --step-h3: clamp(1.62rem, 1.33rem + 1.3vw, 2.5rem); /* 26→40 */
+  --step-h4: clamp(1.31rem, 1.19rem + 0.556vw, 1.69rem); /* 21→27 */
+  --step-lead: clamp(1.19rem, 1.12rem + 0.278vw, 1.38rem); /* 19→22 */
+  --step-body: clamp(1.06rem, 1.02rem + 0.185vw, 1.19rem); /* 17→19 */
+  --step-small: clamp(0.812rem, 0.792rem + 0.0926vw, 0.875rem); /* 13→14 */
+  --step-micro: clamp(0.688rem, 0.667rem + 0.0926vw, 0.75rem); /* 11→12 */
+
+  /* Legacy aliases used by shipped components. */
+  --step-display: var(--step-hero);
+  --step-caption: var(--step-small);
+
+  /* ═══ 3. COLOUR PRIMITIVES (PRD Ch. 6.3) ═══
+     Dual-declared: hex fallback first, OKLCH second (Baseline 5/2023). */
+
+  --paper-1: #faf9f6;
+  --paper-1: oklch(98.2% 0.004 91.4);
+  --paper-2: #f0eee6;
+  --paper-2: oklch(94.8% 0.011 95.2);
+  --paper-3: #e8e6dc;
+  --paper-3: oklch(92.4% 0.014 97.5);
+
+  --ink-1: #1a1917;
+  --ink-1: oklch(21.4% 0.004 84.6);
+  --ink-2: #403e39;
+  --ink-2: oklch(36.4% 0.009 88.7);
+  --ink-3: #6e6b63;
+  --ink-3: oklch(52.8% 0.013 89.8);
+  --ink-faint: #8a867c;
+
+  /* The one signal colour. International Klein Blue — Yves Klein's 1960
+     formula — at 10.15:1 on paper-1: link-safe, focus-safe, AAA everywhere. */
+  --accent: #002fa7;
+  --accent: oklch(37.9% 0.195 263);
+  --accent-hover: #002685;
+  --accent-tint: #e8ebf0;
+
+  --hairline: rgba(26, 25, 23, 0.08);
+  --hairline-strong: rgba(26, 25, 23, 0.12);
+
+  /* The code ink-well (PRD Ch. 6.5): a warm-black inset on light paper. */
+  --code-bg: #1c1914;
+  --code-fg: #e9e8e3;
+  --code-comment: #a7a49e;
+  --code-keyword: #5b9eff;
+  --code-string: #8fd3a8;
+  --code-number: #d8a657;
+
+  /* Paper casts soft warm shade — never hard black, never glow. */
+  --shadow-1: 0 1px 2px rgba(26, 25, 23, 0.05);
+  --shadow-2:
+    0 2px 4px rgba(26, 25, 23, 0.05), 0 12px 32px rgba(26, 25, 23, 0.07);
+
+  /* Semantic layer — the only layer components may reference. */
+  --bg: var(--paper-1);
+  --bg-raised: var(--paper-2);
+  --bg-inset: var(--paper-3);
+  --text-primary: var(--ink-1);
+  --text-secondary: var(--ink-2);
+  --text-muted: var(--ink-3);
+  --action: var(--accent);
+  --action-hover: var(--accent-hover);
+  --action-tint: var(--accent-tint);
+  --focus-ring: var(--accent);
+  --border-subtle: var(--hairline);
+  --border-strong: var(--hairline-strong);
+  --selection-bg: var(--ink-1);
+  --selection-fg: var(--paper-1);
+
+  /* The footer ink band — the one sanctioned inversion on a light site.
+     Paper-coloured type on ink, tone-inverted IKB for the status dot
+     (the reserved dark-theme accent, 6.57:1 on the band). */
+  --band-bg: var(--ink-1);
+  --band-fg: #faf9f6;
+  --band-secondary: #c9c6bf;
+  --band-muted: #a7a49e;
+  --band-hairline: rgba(250, 249, 246, 0.12);
+  --band-accent: #5b9eff;
 }
 
-@media (min-width: 64rem) {
+@media (min-width: 700px) {
   :root {
-    --rhythm: 10rem;
+    --grid-columns: 8;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --grid-columns: 12;
   }
 }
 
@@ -92,8 +194,8 @@ html {
 
 body {
   margin: 0;
-  background-color: var(--color-paper);
-  color: var(--color-ink);
+  background-color: var(--bg);
+  color: var(--text-primary);
   font-family: var(--font-serif);
   font-size: var(--step-body);
   line-height: 1.6;
@@ -105,15 +207,16 @@ body {
   overflow-x: hidden;
 }
 
-/* The paper. A 2% grain, drawn once as an inline SVG turbulence and tiled.
-   It is what stops a flat #F6F2EA from reading as "a beige div". */
+/* The paper. A 3% grain, drawn once as an inline SVG turbulence and tiled.
+   It is what stops a flat #FAF9F6 from reading as "a beige div". Bodak
+   ships the same device at 6%; this stays under it by half. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.032;
+  opacity: 0.03;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");
   background-size: 140px 140px;
 }
@@ -128,397 +231,534 @@ body::after {
   pointer-events: none;
   background: radial-gradient(
     120% 80% at 50% -10%,
-    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.5) 0%,
     rgba(255, 255, 255, 0) 60%
   );
 }
 
-body > * {
-  position: relative;
-  z-index: 1;
+/* This must live in the base layer. As an unlayered rule it beat every
+   Tailwind utility (unlayered CSS outranks layered CSS), which silently
+   turned the fixed masthead and the fixed menu overlay into relative
+   elements — the header scrolled away with the page and the overlay pushed
+   the document down by its own height. In the base layer, the utilities
+   layer correctly overrides it wherever a class says fixed or absolute. */
+@layer base {
+  body > * {
+    position: relative;
+    z-index: 1;
+  }
 }
 
+/* Selection is inverted ink — the marking-pen-on-paper feel (Bodak ships
+   exactly this; 16.69:1). */
 ::selection {
-  background: var(--color-pigment-wash);
-  color: var(--color-ink);
+  background: var(--selection-bg);
+  color: var(--selection-fg);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   TYPE
-   ═══════════════════════════════════════════════════════════════════════ */
+@layer components {
+  /* ═══════════════════════════════════════════════════════════════════════
+     TYPE
+     ═══════════════════════════════════════════════════════════════════════ */
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  margin: 0;
-  text-wrap: balance;
-  letter-spacing: -0.015em;
-}
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
 
-h1 {
-  font-size: var(--step-h1);
-  line-height: 1.06;
-}
-h2 {
-  font-size: var(--step-h2);
-  line-height: 1.12;
-}
-h3 {
-  font-size: var(--step-h3);
-  line-height: 1.24;
-}
+  h1 {
+    font-size: var(--step-h1);
+    line-height: 1.06;
+  }
+  h2 {
+    font-size: var(--step-h2);
+    line-height: 1.12;
+  }
+  h3 {
+    font-size: var(--step-h3);
+    line-height: 1.24;
+  }
 
-p {
-  margin: 0;
-}
+  p {
+    margin: 0;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 
-/* Micro-label: the smallest voice on the site. Used for kickers, figure
-   numbers, table headers, and nothing else. */
-.micro {
-  font-family: var(--font-sans);
-  font-size: var(--step-micro);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-variant-numeric: tabular-nums lining-nums;
-  color: var(--color-graphite);
-}
+  /* Micro-label: the smallest voice on the site. Used for kickers, figure
+     numbers, table headers, and nothing else. Mono, uppercase, +0.08em. */
+  .micro {
+    font-family: var(--font-mono);
+    font-size: var(--step-micro);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums lining-nums;
+    color: var(--text-muted);
+  }
 
-.caption {
-  font-family: var(--font-sans);
-  font-size: var(--step-caption);
-  line-height: 1.5;
-  color: var(--color-graphite);
-  font-variant-numeric: tabular-nums lining-nums;
-}
+  .caption {
+    font-family: var(--font-sans);
+    font-size: var(--step-small);
+    line-height: 1.5;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums lining-nums;
+  }
 
-/* Data never uses old-style figures. Columns must align. */
-.tabular,
-table,
-.mono {
-  font-variant-numeric: tabular-nums lining-nums;
-}
+  /* Data never uses old-style figures. Columns must align. */
+  .tabular,
+  table,
+  .mono {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
 
-.mono {
-  font-family: var(--font-mono);
-  font-feature-settings: 'ss02' 1;
-}
+  .mono {
+    font-family: var(--font-mono);
+    /* Ligatures stay off outside real code blocks: '==' must stay '==' in a
+       label. Code blocks turn them back on. */
+    font-feature-settings: 'calt' 0, 'liga' 0;
+  }
 
-.ui {
-  font-family: var(--font-sans);
-  font-variant-numeric: tabular-nums lining-nums;
-}
+  .ui {
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums lining-nums;
+  }
 
-.prose-measure {
-  max-width: var(--measure);
-}
+  .prose-measure {
+    max-width: var(--measure);
+  }
 
-.prose p + p {
-  margin-top: 1.1em;
-}
+  .prose p + p {
+    margin-top: 1.1em;
+  }
 
-/* Drop the first line of a lede into a slightly larger, lighter setting. */
-.lede {
-  font-size: clamp(1.1875rem, 1.05rem + 0.6vw, 1.5rem);
-  line-height: 1.5;
-  color: var(--color-graphite);
-  letter-spacing: -0.005em;
-}
+  /* Drop the first line of a lede into a slightly larger, lighter setting. */
+  .lede {
+    font-size: clamp(1.1875rem, 1.05rem + 0.6vw, 1.5rem);
+    line-height: 1.5;
+    color: var(--text-secondary);
+    letter-spacing: -0.005em;
+  }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   GRID
-   12 columns, deliberate asymmetry. Text starts on column 3 or 4; figures
-   bleed toward the margin; section marks hang outside the text block.
-   ═══════════════════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════════════════
+     GRID (PRD Ch. 4.2)
+     12 columns on desktop, 8 at the tablet step, 4 on phones. Deliberate
+     asymmetry. Text starts on column 3 or 4; figures bleed toward the margin;
+     section marks hang outside the text block.
+     ═══════════════════════════════════════════════════════════════════════ */
 
-.shell {
-  width: 100%;
-  max-width: var(--content-max);
-  margin-inline: auto;
-  padding-inline: var(--margin);
-}
+  .shell {
+    width: 100%;
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding-inline:
+      max(var(--grid-margin), env(safe-area-inset-left))
+      max(var(--grid-margin), env(safe-area-inset-right));
+  }
 
-.grid12 {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--gutter);
-}
-
-@media (max-width: 47.99rem) {
   .grid12 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    display: grid;
+    grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
   }
-  .grid12 > * {
-    grid-column: 1 / -1 !important;
+
+  @media (max-width: 43.74rem) {
+    .grid12 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .grid12 > * {
+      grid-column: 1 / -1 !important;
+    }
   }
-}
 
-/* ═══════════════════════════════════════════════════════════════════════
-   THE SECTION MARK (§)
-   Borrowed from the DrugOS specification, whose numbered sections are cited
-   547 times in that codebase. It is the device no template has.
-   ═══════════════════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════════════════
+     THE SECTION MARK (§)
+     Borrowed from the DrugOS specification, whose numbered sections are cited
+     547 times in that codebase. It is the device no template has.
+     ═══════════════════════════════════════════════════════════════════════ */
 
-.section {
-  position: relative;
-  padding-block: var(--rhythm);
-  scroll-margin-top: calc(var(--masthead-h) + 1rem);
-}
+  .section {
+    position: relative;
+    padding-block: var(--rhythm);
+    scroll-margin-top: calc(var(--masthead-h) + 1rem);
+  }
 
-.section-mark {
-  font-family: var(--font-mono);
-  font-size: var(--step-micro);
-  letter-spacing: 0.06em;
-  color: var(--color-graphite);
-  font-variant-numeric: tabular-nums lining-nums;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.5em;
-  transition: color var(--dur-base) var(--ease-settle);
-}
+  .section--statement {
+    padding-block: var(--rhythm-statement);
+  }
 
-.section-mark[data-active='true'] {
-  color: var(--color-pigment);
-}
+  .section-mark {
+    font-family: var(--font-mono);
+    font-size: var(--step-micro);
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums lining-nums;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5em;
+    transition: color var(--dur-base) var(--ease-settle);
+  }
 
-.section-mark .mark-glyph {
-  font-size: 1.15em;
-}
+  .section-mark[data-active='true'] {
+    color: var(--action);
+  }
 
-/* On wide screens the mark hangs in the left margin, outside the text. */
-@media (min-width: 64rem) {
-  .section-mark--hanging {
+  .section-mark .mark-glyph {
+    font-size: 1.15em;
+  }
+
+  /* On wide screens the mark hangs in the left margin, outside the text. */
+  @media (min-width: 64rem) {
+    .section-mark--hanging {
+      position: absolute;
+      left: 0;
+      top: var(--rhythm);
+      writing-mode: horizontal-tb;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     RULES
+     Elevation is expressed by paper tone plus a 1px rule. Never a shadow.
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  .rule {
+    height: 1px;
+    width: 100%;
+    background: var(--border-subtle);
+    border: 0;
+    transform-origin: left center;
+  }
+
+  .rule--ink {
+    background: var(--ink-1);
+  }
+
+  .rule--pigment {
+    background: var(--action);
+  }
+
+  .plate {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     LINKS — the ink underline
+     An IKB stroke that draws left to right on hover and focus, and retracts
+     on leave. One considered hover per interactive family.
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  .ink-link {
+    position: relative;
+    display: inline;
+    color: inherit;
+    background-image: linear-gradient(var(--action), var(--action));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    padding-bottom: 0.08em;
+    transition: background-size var(--dur-base) var(--ease-draw),
+      color var(--dur-quick) var(--ease-settle);
+  }
+
+  .ink-link--resting {
+    background-size: 100% 1px;
+    background-image: linear-gradient(
+      var(--hairline-strong),
+      var(--hairline-strong)
+    );
+  }
+
+  .ink-link:hover,
+  .ink-link:focus-visible {
+    background-size: 100% 1px;
+    background-image: linear-gradient(var(--action), var(--action));
+    color: var(--action);
+  }
+
+  /* Body links inside prose carry the accent as their text colour — IKB is
+     link-safe at 10.15:1, so a second signal is unnecessary. */
+  .prose a.ink-link,
+  a.ink-link--body {
+    color: var(--action);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     FOCUS (WCAG 2.2 SC 2.4.13)
+     2px IKB outline, 2px offset — 10.15:1 against paper. On everything
+     focusable, always visible.
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
+
+  .skip-link {
     position: absolute;
-    left: 0;
-    top: var(--rhythm);
-    writing-mode: horizontal-tb;
+    left: var(--grid-margin);
+    top: 0;
+    transform: translateY(-120%);
+    z-index: 100;
+    background: var(--bg-raised);
+    border: 1px solid var(--ink-1);
+    padding: 0.6rem 1rem;
+    font-family: var(--font-sans);
+    font-size: var(--step-small);
+    transition: transform var(--dur-base) var(--ease-settle);
   }
+
+  .skip-link:focus {
+    transform: translateY(0.5rem);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     BUTTONS (PRD Ch. 11.4)
+     Two families. An IKB rule-button, and a quiet ink one. Primary fills
+     with the accent and slides its arrow in from the left. No fills that
+     glow, no borders that pulse. Minimum target 44px.
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    font-family: var(--font-sans);
+    font-size: var(--step-small);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding: 0.7rem 1.15rem;
+    min-height: 2.75rem;
+    border: 1px solid var(--ink-1);
+    background: transparent;
+    color: var(--ink-1);
+    cursor: pointer;
+    transition: background-color var(--dur-quick) var(--ease-settle),
+      color var(--dur-quick) var(--ease-settle),
+      border-color var(--dur-quick) var(--ease-settle);
+  }
+
+  .btn:hover {
+    background: var(--ink-1);
+    color: var(--paper-1);
+  }
+
+  .btn--pigment {
+    border-color: var(--action);
+    color: var(--action);
+  }
+
+  .btn--pigment:hover {
+    background: var(--action);
+    color: var(--paper-1);
+  }
+
+  .btn--quiet {
+    border-color: var(--hairline-strong);
+    color: var(--ink-2);
+  }
+
+  .btn--quiet:hover {
+    background: transparent;
+    border-color: var(--ink-1);
+    color: var(--ink-1);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ARROWS — the drawn arrow system (PRD Ch. 7.3)
+     Switzer, Newsreader and JetBrains Mono ship no →/↗ glyphs (verified
+     against the served woff2 cmaps), so typographic arrows fall back to
+     system fonts and break. The arrows are therefore drawn: 24×24 viewBox,
+     1.5px stroke, butt caps, miter joins.
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  .arrow-swap {
+    position: relative;
+    display: inline-flex;
+    overflow: hidden;
+  }
+
+  .arrow-swap svg {
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .arrow-swap .arrow-b {
+    position: absolute;
+    inset: 0;
+    transform: translate3d(-1.2em, 1.9em, 0);
+  }
+
+  .arrow-swap:hover .arrow-a,
+  .arrow-swap:focus-visible .arrow-a,
+  .group:hover .arrow-swap .arrow-a {
+    transform: translate3d(1.2em, -1.9em, 0);
+  }
+
+  .arrow-swap:hover .arrow-b,
+  .arrow-swap:focus-visible .arrow-b,
+  .group:hover .arrow-swap .arrow-b {
+    transform: translate3d(0, 0, 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arrow-swap svg {
+      transition: opacity 0.2s linear;
+      transform: none;
+    }
+    .arrow-swap .arrow-b {
+      opacity: 0;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     MENU OVERLAY (PRD Ch. 11.3)
+     Full-screen, ink on paper, staggered link reveal. Links roll their
+     labels on hover: two stacked lines, translateY -100%.
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  .roll {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    /* Exactly one line tall: the stacked duplicate label sits below the
+       clip until hover slides the column up. Without the height, the
+       container grows to both lines and the duplicate shows under every
+       label (and doubles the menu height). */
+    height: 1.1em;
+    line-height: 1.1;
+  }
+
+  .roll > span {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.38s var(--ease-out);
+  }
+
+  .roll > span > span {
+    display: block;
+  }
+
+  .roll:hover > span,
+  .roll:focus-visible > span,
+  a:hover .roll > span,
+  .group:hover .roll > span {
+    transform: translateY(-50%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .roll > span {
+      transition: none;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     FIGURE PLATES
+     Numbered, captioned, framed like a plate in a printed monograph.
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  figure {
+    margin: 0;
+  }
+
+  .figure-plate {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    padding: clamp(1rem, 3vw, 2.25rem);
+  }
+
+  .figure-caption {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.85rem;
+    font-family: var(--font-sans);
+    font-size: var(--step-small);
+    line-height: 1.45;
+    color: var(--text-muted);
+  }
+
+  .figure-caption .fig-id {
+    flex: none;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums lining-nums;
+    color: var(--action);
+    letter-spacing: 0.02em;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     TABLES — metrics with provenance
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  .metric-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-sans);
+    font-size: var(--step-small);
+  }
+
+  .metric-table th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: var(--step-micro);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 0 0.75rem;
+    border-bottom: 1px solid var(--ink-1);
+  }
+
+  .metric-table td {
+    padding: 0.95rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: baseline;
+  }
+
+  .metric-table tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .metric-table .val {
+    font-family: var(--font-mono);
+    font-size: 1.05em;
+    color: var(--ink-1);
+    white-space: nowrap;
+  }
+
+  .metric-table .src {
+    font-size: var(--step-micro);
+    color: var(--text-muted);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     CODE INK-WELL (PRD Ch. 6.5 / 11.4)
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  .code-well {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    font-feature-settings: 'calt' 1, 'liga' 1; /* ligatures ON in real code */
+    box-shadow: inset 0 0 0 1px rgba(233, 232, 227, 0.1);
+  }
+
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   RULES
-   Elevation is expressed by paper tone plus a 1px rule. Never a shadow.
-   ═══════════════════════════════════════════════════════════════════════ */
-
-.rule {
-  height: 1px;
-  width: 100%;
-  background: var(--color-rule);
-  border: 0;
-  transform-origin: left center;
-}
-
-.rule--ink {
-  background: var(--color-ink);
-}
-
-.rule--pigment {
-  background: var(--color-pigment);
-}
-
-.plate {
-  background: var(--color-paper-raised);
-  border: 1px solid var(--color-rule);
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
-   LINKS — the ink underline
-   A pigment stroke that draws left to right on hover and focus, and
-   retracts on leave. One considered hover per interactive family.
-   ═══════════════════════════════════════════════════════════════════════ */
-
-.ink-link {
-  position: relative;
-  display: inline;
-  color: inherit;
-  background-image: linear-gradient(var(--color-pigment), var(--color-pigment));
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 0% 1px;
-  padding-bottom: 0.08em;
-  transition: background-size var(--dur-base) var(--ease-draw),
-    color var(--dur-quick) var(--ease-settle);
-}
-
-.ink-link--resting {
-  background-size: 100% 1px;
-  background-image: linear-gradient(var(--color-rule-strong), var(--color-rule-strong));
-}
-
-.ink-link:hover,
-.ink-link:focus-visible {
-  background-size: 100% 1px;
-  background-image: linear-gradient(var(--color-pigment), var(--color-pigment));
-  color: var(--color-pigment);
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
-   FOCUS
-   2px pigment outline, 3px offset. On everything focusable, always visible.
-   ═══════════════════════════════════════════════════════════════════════ */
-
-:focus-visible {
-  outline: 2px solid var(--color-pigment);
-  outline-offset: 3px;
-  border-radius: 1px;
-}
-
-.skip-link {
-  position: absolute;
-  left: var(--margin);
-  top: 0;
-  transform: translateY(-120%);
-  z-index: 100;
-  background: var(--color-paper-raised);
-  border: 1px solid var(--color-ink);
-  padding: 0.6rem 1rem;
-  font-family: var(--font-sans);
-  font-size: var(--step-caption);
-  transition: transform var(--dur-base) var(--ease-settle);
-}
-
-.skip-link:focus {
-  transform: translateY(0.5rem);
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
-   BUTTONS
-   Two families. A pigment rule-button, and a quiet ink one. No fills that
-   glow, no borders that pulse.
-   ═══════════════════════════════════════════════════════════════════════ */
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6em;
-  font-family: var(--font-sans);
-  font-size: var(--step-caption);
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  padding: 0.7rem 1.15rem;
-  min-height: 2.75rem;
-  border: 1px solid var(--color-ink);
-  background: transparent;
-  color: var(--color-ink);
-  cursor: pointer;
-  transition: background-color var(--dur-quick) var(--ease-settle),
-    color var(--dur-quick) var(--ease-settle),
-    border-color var(--dur-quick) var(--ease-settle);
-}
-
-.btn:hover {
-  background: var(--color-ink);
-  color: var(--color-paper);
-}
-
-.btn--pigment {
-  border-color: var(--color-pigment);
-  color: var(--color-pigment);
-}
-
-.btn--pigment:hover {
-  background: var(--color-pigment);
-  color: var(--color-paper);
-}
-
-.btn--quiet {
-  border-color: var(--color-rule);
-  color: var(--color-graphite);
-}
-
-.btn--quiet:hover {
-  background: transparent;
-  border-color: var(--color-ink);
-  color: var(--color-ink);
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
-   FIGURE PLATES
-   Numbered, captioned, framed like a plate in a printed monograph.
-   ═══════════════════════════════════════════════════════════════════════ */
-
-figure {
-  margin: 0;
-}
-
-.figure-plate {
-  background: var(--color-paper-raised);
-  border: 1px solid var(--color-rule);
-  padding: clamp(1rem, 3vw, 2.25rem);
-}
-
-.figure-caption {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 0.85rem;
-  font-family: var(--font-sans);
-  font-size: var(--step-caption);
-  line-height: 1.45;
-  color: var(--color-graphite);
-}
-
-.figure-caption .fig-id {
-  flex: none;
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums lining-nums;
-  color: var(--color-pigment);
-  letter-spacing: 0.02em;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
-   TABLES — metrics with provenance
-   ═══════════════════════════════════════════════════════════════════════ */
-
-.metric-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--font-sans);
-  font-size: var(--step-caption);
-}
-
-.metric-table th {
-  text-align: left;
-  font-size: var(--step-micro);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-graphite);
-  padding: 0 0 0.75rem;
-  border-bottom: 1px solid var(--color-ink);
-}
-
-.metric-table td {
-  padding: 0.95rem 0;
-  border-bottom: 1px solid var(--color-rule);
-  vertical-align: baseline;
-}
-
-.metric-table tr:last-child td {
-  border-bottom: 0;
-}
-
-.metric-table .val {
-  font-family: var(--font-mono);
-  font-size: 1.05em;
-  color: var(--color-ink);
-  white-space: nowrap;
-}
-
-.metric-table .src {
-  font-size: var(--step-micro);
-  color: var(--color-graphite);
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
-   MOTION — the six signature movements
+   MOTION — the signature movements
    Every animation either explains structure or confirms an action.
    All of it sits behind @supports, so a browser without scroll-driven
    animation shows finished, fully visible content. Never opacity: 0.
