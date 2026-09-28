@@ -71,8 +71,22 @@ const INJECTION = [
 
 /** About a person, rather than about work published on this site. Age and
  * neighbourhood are published on the site (profile.ts `personal`), so they
- * are answerable; a date of birth is not published and will not be guessed. */
+ * are answerable; a date of birth is not published and will not be guessed.
+ *
+ * The same line separates the two kinds of "address": the email is printed
+ * on the site and must still be answered, while the street that the email
+ * does not give is not published and will not be guessed. Tastes sit on the
+ * private side throughout — a favourite film is not a fact this site holds,
+ * and what is not held is not invented. */
 const PRIVATE = [
+  // Qualified deliberately: "email address" is published and answerable,
+  // and "where does he live" is the neighbourhood in profile.ts.
+  /\b(home|house|residential|postal|street|mailing) address\b/i,
+  // Preferences of any kind. Retrieval will happily surface a chunk that
+  // shares a word with the question, and the model is then polite about a
+  // fact nobody wrote down; the rule settles it before that can start.
+  /\b(favourite|favorite)\b/i,
+  /\bhobb(y|ies)\b/i,
   /\b(date of birth|dob|birthday)\b/i,
   /\bsalary|compensation|ctc|package expectation|how much (does|would) he (earn|want|charge)\b/i,
   /\bfamily|parents?|mother|father|sibling|brother|sister|wife|husband|girlfriend|boyfriend|married|marital\b/i,
