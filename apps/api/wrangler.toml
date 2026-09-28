@@ -12,14 +12,14 @@ enabled = true
 
 [vars]
 # Only these origins may call the API. Never "*".
-ALLOWED_ORIGIN = "https://manojc.vercel.app"
+ALLOWED_ORIGIN = "https://manoj-portfolio-umber.vercel.app"
 # Vercel preview deployments for this project, matched as a suffix.
 PREVIEW_ORIGIN_SUFFIX = ".vercel.app"
 PREVIEW_ORIGIN_PREFIX = "https://manoj-portfolio-"
 
 # The models, by id, so a rename is a config change and not a code change.
-PRIMARY_MODEL = "@cf/google/gemma-4-26b-a4b-it"
-FALLBACK_MODEL = "@cf/qwen/qwen3-30b-a3b-fp8"
+PRIMARY_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+FALLBACK_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct"
 EMBEDDING_MODEL = "@cf/baai/bge-m3"
 
 # Free allocation is 10,000 Neurons a day. At 70% the guide switches to the

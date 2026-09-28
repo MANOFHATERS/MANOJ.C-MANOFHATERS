@@ -45,6 +45,12 @@ app.use('*', async (c, next) => {
       headers: origin
         ? {
             'access-control-allow-origin': origin,
+            // navigator.sendBeacon always sends in credentials mode
+            // 'include', so /v1/events needs this header even though the
+            // site sets no cookies at all. The origin above is always one
+            // allowlisted value and never '*', which is what makes
+            // allowing credentials safe here.
+            'access-control-allow-credentials': 'true',
             'access-control-allow-methods': 'GET,POST,OPTIONS',
             'access-control-allow-headers': 'content-type',
             'access-control-max-age': '86400',
@@ -58,6 +64,7 @@ app.use('*', async (c, next) => {
 
   if (origin) {
     c.res.headers.set('access-control-allow-origin', origin);
+    c.res.headers.set('access-control-allow-credentials', 'true');
     c.res.headers.set('vary', 'Origin');
   }
   c.res.headers.set('x-content-type-options', 'nosniff');
@@ -323,9 +330,22 @@ app.post('/v1/chat', async (c) => {
             const data = line.slice(5).trim();
             if (data === '[DONE]') continue;
             try {
-              const parsed = JSON.parse(data) as { response?: string };
-              if (!parsed.response) continue;
-              answer += parsed.response;
+              // Two wire formats reach here. Cloudflare's own models stream
+              // { response }; the externally hosted ones stream OpenAI chunks,
+              // { choices: [{ delta: { content } }] }. The model is a config
+              // value, so both are read rather than assuming either. A
+              // reasoning model also streams delta.reasoning_content — that is
+              // its scratchpad, and is deliberately never forwarded or stored.
+              const parsed = JSON.parse(data) as {
+                response?: string;
+                choices?: ReadonlyArray<{
+                  delta?: { content?: string | null };
+                }>;
+              };
+              const piece =
+                parsed.response ?? parsed.choices?.[0]?.delta?.content ?? '';
+              if (!piece) continue;
+              answer += piece;
               // Drop a finished trailer, then hold back any trailing bracket
               // run that has not closed yet — that is a trailer arriving.
               const visible = answer

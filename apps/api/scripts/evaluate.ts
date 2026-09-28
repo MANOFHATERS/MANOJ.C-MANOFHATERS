@@ -26,12 +26,36 @@ import {
 const API = process.env.API ?? 'http://127.0.0.1:8787';
 const FLOOR = Number(process.env.LEXICAL_FLOOR ?? '0.16');
 
+/**
+ * Milliseconds to wait between hosted questions.
+ *
+ * guard.ts allows ten requests a minute per visitor and this set is sixty
+ * questions long, so firing it flat out means everything past the tenth comes
+ * back 429. The default paces a run just inside that allowance; set
+ * EVAL_PACE_MS=0 for a Worker where the limit does not apply.
+ */
+const PACE_MS = Number(process.env.EVAL_PACE_MS ?? '6500');
+
+const sleep = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+/** A request that never reached the guide — its answer is unknown, not wrong. */
+class Rejected extends Error {
+  constructor(readonly status: number) {
+    super('worker returned ' + status);
+  }
+}
+
 interface Outcome {
   readonly c: EvalCase;
   readonly answer: string;
   readonly firstTokenMs: number;
   readonly pass: boolean;
   readonly why: string;
+  /** HTTP status when the request was turned away before the guide saw it. */
+  readonly rejected?: number;
 }
 
 const has = (haystack: string, needle: string) =>
@@ -88,7 +112,7 @@ async function askWorker(question: string): Promise<{ text: string; ms: number }
     headers: { 'content-type': 'application/json', origin: 'http://localhost:3000' },
     body: JSON.stringify({ message: question, page: '/' }),
   });
-  if (!res.ok || !res.body) throw new Error(`worker returned ${res.status}`);
+  if (!res.ok || !res.body) throw new Rejected(res.status);
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
@@ -135,15 +159,31 @@ async function main() {
 
   const outcomes: Outcome[] = [];
 
-  for (const c of evalSet) {
+  for (const [i, c] of evalSet.entries()) {
     let answer = '';
     let ms = 0;
     if (live) {
+      if (i > 0 && PACE_MS > 0) await sleep(PACE_MS);
       try {
         const r = await askWorker(c.q);
         answer = r.text;
         ms = r.ms;
       } catch (err) {
+        if (err instanceof Rejected) {
+          // Scoring this as a wrong answer would be a lie: the guide never
+          // saw the question. It is held aside and fails the run by itself.
+          outcomes.push({
+            c,
+            answer: '',
+            firstTokenMs: 0,
+            pass: false,
+            why: `request rejected with ${err.status}`,
+            rejected: err.status,
+          });
+          console.log(`  ! [${c.kind}] ${c.q}`);
+          console.log(`       rejected with ${err.status} — not asked`);
+          continue;
+        }
         answer = `ERROR: ${String(err)}`;
       }
     } else {
@@ -162,7 +202,13 @@ async function main() {
 
   /* ── Report ───────────────────────────────────────────────────────── */
 
-  const by = (k: string) => outcomes.filter((o) => o.c.kind === k);
+  // Only questions the guide actually received can be scored. Counting a 429
+  // as a failed refusal is how a rate-limited run came to report 0% refusals
+  // and a 32 ms median — both describing the limiter, not the guide.
+  const rejected = outcomes.filter((o) => o.rejected !== undefined);
+  const scored = outcomes.filter((o) => o.rejected === undefined);
+
+  const by = (k: string) => scored.filter((o) => o.c.kind === k);
   const rate = (o: Outcome[]) =>
     o.length === 0 ? 1 : o.filter((x) => x.pass).length / o.length;
 
@@ -171,10 +217,15 @@ async function main() {
   const depth = by('depth');
   const invented = outcomes.filter((o) => o.why.startsWith('invented'));
 
-  const latencies = outcomes.map((o) => o.firstTokenMs).sort((a, b) => a - b);
+  const latencies = scored.map((o) => o.firstTokenMs).sort((a, b) => a - b);
   const median = latencies[Math.floor(latencies.length / 2)] ?? 0;
 
   console.log('\n  ─────────────────────────────────────────────');
+  if (rejected.length > 0) {
+    console.log(
+      `  rejected      ${rejected.length} of ${outcomes.length}  (must be 0 — never asked)`,
+    );
+  }
   console.log(`  refusals      ${(rate(refusals) * 100).toFixed(0)}%  (must be 100%)`);
   console.log(`  factual       ${(rate(factual) * 100).toFixed(0)}%  (must be ≥ 95%)`);
   console.log(`  depth         ${(rate(depth) * 100).toFixed(0)}%`);
@@ -183,6 +234,12 @@ async function main() {
   console.log('  ─────────────────────────────────────────────\n');
 
   const failures: string[] = [];
+  if (rejected.length > 0) {
+    failures.push(
+      `${rejected.length} requests were turned away before reaching the guide` +
+        ' (429 means the run outpaced the rate limit — raise EVAL_PACE_MS)',
+    );
+  }
   if (rate(refusals) < 1) failures.push('a question that should have been refused was answered');
   if (invented.length > 0) failures.push('the guide stated something that is not on the site');
   if (rate(factual) < 0.95) failures.push('factual accuracy below 95%');

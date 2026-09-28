@@ -31,7 +31,6 @@ interface PendingEvent {
 }
 
 const eventBuffer: PendingEvent[] = [];
-const FLUSH_AT = 12;
 
 export function queueEvent(
   env: Env,
@@ -39,7 +38,14 @@ export function queueEvent(
   event: PendingEvent,
 ): void {
   eventBuffer.push(event);
-  if (eventBuffer.length < FLUSH_AT) return;
+  // Flushed on the request that queued it, inside waitUntil so the beacon's
+  // response is not held up. An earlier version waited for a batch of twelve,
+  // which never arrived: Cloudflare spreads requests across many isolates,
+  // each holding its own buffer, and an isolate is recycled long before it
+  // sees twelve link clicks — so whatever it held was lost. drainEvents could
+  // not rescue them either, because the cron runs in an isolate of its own
+  // with an empty buffer. The insert costs a round trip, but it is I/O and
+  // not CPU, so it does not eat into the 10 ms limit.
   const batch = eventBuffer.splice(0, eventBuffer.length);
   ctx.waitUntil(flushEvents(env, batch));
 }
@@ -53,21 +59,25 @@ export function drainEvents(env: Env, ctx: Waitable): void {
 
 async function flushEvents(env: Env, batch: PendingEvent[]): Promise<void> {
   const sql = db(env);
-  if (!sql) return;
+  if (!sql || batch.length === 0) return;
+
+  const insert = () => sql`
+    insert into link_events (name, path, referrer_host)
+    select * from unnest(
+      ${batch.map((e) => e.name)}::text[],
+      ${batch.map((e) => e.path)}::text[],
+      ${batch.map((e) => e.referrerHost)}::text[]
+    )
+  `;
+
   try {
-    await sql`
-      insert into link_events (name, path, referrer_host)
-      select * from unnest(
-        ${batch.map((e) => e.name)}::text[],
-        ${batch.map((e) => e.path)}::text[],
-        ${batch.map((e) => e.referrerHost)}::text[]
-      )
-    `;
+    await insert();
   } catch {
-    // One retry, then the events are gone. An analytics row is not worth a
-    // second round trip on a compute budget this tight.
+    // One real retry: a Neon compute that has scaled to zero refuses the
+    // first connection and accepts the next. After that the events are gone,
+    // because an analytics row is not worth a third round trip.
     try {
-      await sql`select 1`;
+      await insert();
     } catch {
       /* database is asleep or suspended; nothing to do */
     }
