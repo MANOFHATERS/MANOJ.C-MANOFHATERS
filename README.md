@@ -9,7 +9,7 @@ renders the pages.
 > I build systems that tell the truth, especially when the truth is
 > inconvenient.
 
-**Live:** <https://manojc.vercel.app>
+**Live:** <https://manoj-portfolio-umber.vercel.app/>
 
 ---
 

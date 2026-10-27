@@ -139,8 +139,8 @@ function Resume() {
       author="Manoj C"
       subject="Full-stack engineer and ML systems — résumé"
       keywords="Full-stack, ML, Machine Learning, PyTorch, React, Next.js, FastAPI, Python, TypeScript, Bengaluru"
-      creator="manojc.vercel.app"
-      producer="manojc.vercel.app"
+      creator="manoj-portfolio-umber.vercel.app"
+      producer="manoj-portfolio-umber.vercel.app"
       language="en-IN"
     >
       <Page size="A4" style={s.page}>

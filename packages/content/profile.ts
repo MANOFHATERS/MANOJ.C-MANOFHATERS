@@ -22,7 +22,7 @@ export const site = {
     'Manoj C builds ML systems that state their own limits: a drug-repurposing knowledge graph, a generative tail-risk engine, and a weather platform that shows where its sources disagree.',
   thesis:
     'I build systems that tell the truth, especially when the truth is inconvenient.',
-  url: 'https://manojc.vercel.app',
+  url: 'https://manoj-portfolio-umber.vercel.app',
   locale: 'en-IN',
   updated: 'September 2026',
 } as const;

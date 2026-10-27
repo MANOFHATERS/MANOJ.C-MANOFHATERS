@@ -103,7 +103,7 @@ as secrets.
 
 ## Done vs pending
 
-**Done** — deployed at `manojc.vercel.app`, commit on `main`:
+**Done** — deployed at `manoj-portfolio-umber.vercel.app`, commit on `main`:
 
 - Full editorial site + motion layer, all routes SSG
 - Three case studies with dossier plates and live deployment links

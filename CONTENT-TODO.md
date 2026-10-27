@@ -102,7 +102,7 @@ Limitations section. Rotate them before launch.
 
 ### Confirm the domain
 
-`packages/content/profile.ts` → `site.url` is `https://manojc.vercel.app`.
+`packages/content/profile.ts` → `site.url` is `https://manoj-portfolio-umber.vercel.app`.
 Check the subdomain is free; the fallback is `manoj-c.vercel.app`. It appears
 in canonical URLs, the sitemap, `/llms.txt`, the JSON-LD and the résumé footer,
 and it is defined in exactly one place.
